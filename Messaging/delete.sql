@@ -25,18 +25,13 @@ DELETE FROM profile_exceptions WHERE modname='Messaging/Write.php';
  * Student cross message table
  */
 --
--- Name: studentxmessage; Type: TABLE; Schema: public; Owner: rosariosis; Tablespace: 
---
-
-DROP TABLE studentxmessage;
-
-
 /**
  * User cross message table
  */
 --
 -- Name: userxmessage; Type: TABLE; Schema: public; Owner: rosariosis; Tablespace: 
 --
+DROP INDEX userxmessage_ind;
 
 DROP TABLE userxmessage;
 
@@ -44,8 +39,16 @@ DROP TABLE userxmessage;
 /**
  * Messages table
  */
+DROP INDEX messages_ind;
+
+ALTER TABLE ONLY messages DROP CONSTRAINT messages_pkey;
+
+DROP SEQUENCE messages_seq;
+
+
 --
 -- Name: messages; Type: TABLE; Schema: public; Owner: rosariosis; Tablespace: 
 --
 
 DROP TABLE messages;
+

@@ -49,20 +49,6 @@ INSERT INTO profile_exceptions (profile_id, modname, can_use, can_edit) VALUES (
  */
 
 /**
- * Student cross message table
- */
---
--- Name: studentxmessage; Type: TABLE; Schema: public; Owner: rosariosis; Tablespace: 
---
-
-CREATE TABLE studentxmessage (
-    student_id numeric NOT NULL,
-    message_id numeric NOT NULL,
-    status character varying(10)
-);
-
-
-/**
  * User cross message table
  */
 --
@@ -71,9 +57,19 @@ CREATE TABLE studentxmessage (
 
 CREATE TABLE userxmessage (
     user_id numeric NOT NULL,
+    key character varying(10),
     message_id numeric NOT NULL,
-    status character varying(10)
+    status character varying(10) NOT NULL
 );
+
+
+
+--
+-- Name: userxmessage_ind; Type: INDEX; Schema: public; Owner: rosariosis; Tablespace: 
+--
+
+CREATE INDEX userxmessage_ind ON userxmessage USING btree (user_id, key, status);
+
 
 
 /**
@@ -87,6 +83,7 @@ CREATE TABLE messages (
     message_id numeric NOT NULL,
     syear numeric(4,0),
     school_id numeric NOT NULL,
+    "from" character varying(255),
     recipients text,
     subject character varying(100),
     "datetime" timestamp(0) without time zone,
@@ -124,7 +121,7 @@ ALTER TABLE ONLY messages
 
 
 --
--- Name: attendance_code_categories_ind2; Type: INDEX; Schema: public; Owner: rosariosis; Tablespace: 
+-- Name: messages_ind; Type: INDEX; Schema: public; Owner: rosariosis; Tablespace: 
 --
 
-CREATE INDEX messages_ind ON message USING btree (syear, school_id);
+CREATE INDEX messages_ind ON messages USING btree (syear, school_id);
