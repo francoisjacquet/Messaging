@@ -24,14 +24,14 @@ function MessagesListOutput( $view )
 
 	$columns_sql = 'm.' . implode( ', m.', array_keys( $view_data['columns'] ) );
 
-	$view_sql = "SELECT m.MESSAGE_ID, uxm.STATUS, " . $columns_sql . "
-		FROM MESSAGES m, USERXMESSAGE uxm
+	$view_sql = "SELECT m.MESSAGE_ID, mxu.STATUS, " . $columns_sql . "
+		FROM MESSAGES m, MESSAGEXUSER mxu
 		WHERE m.SYEAR='" . UserSyear() . "'
 		AND m.SCHOOL_ID='" . UserSchool() . "'
-		AND m.MESSAGE_ID=uxm.MESSAGE_ID
-		AND uxm.KEY='" . $current_user['key'] . "'
-		AND uxm.USER_ID='" . $current_user['user_id'] . "'
-		AND uxm.STATUS='" . $view . "'";
+		AND m.MESSAGE_ID=mxu.MESSAGE_ID
+		AND mxu.KEY='" . $current_user['key'] . "'
+		AND mxu.USER_ID='" . $current_user['user_id'] . "'
+		AND mxu.STATUS='" . $view . "'";
 
 	$view_RET = DBGet(
 		DBQuery( $view_sql ),
@@ -148,7 +148,22 @@ function _makeMessageRecipients( $value, $column )
 
 function _makeMessageRecipientsHeader( $value, $column )
 {
+	global $THIS_RET;
+
 	$recipients_trucated = _makeMessageRecipients( $value, $column );
+
+	if ( $THIS_RET['STATUS'] === 'sent' )
+	{
+		// If sent, display percentage read.
+		$msg_id = $THIS_RET['MESSAGE_ID'];
+
+		$read_label = _getSentMessageReadPercent( $THIS_RET['MESSAGE_ID'] );
+
+		if ( $read_label )
+		{
+			$recipients_trucated .= ' (' . $read_label . ')';
+		}
+	}
 
 	// TODO: give option to view ALL recipients.
 	return _( 'To' ) . ': ' . $recipients_trucated;
@@ -168,12 +183,6 @@ function _makeMessageSubject( $value, $column )
 		array(),
 		array( 'view' => 'message', 'message_id' => $msg_id )
 	);
-
-	// TODO: add ColorBox link (if function_exists())!
-	if ( function_exists( 'includeOnceColorBox' ) )
-	{
-		includeOnceColorBox();
-	}
 
 	$extra = '';
 
@@ -197,7 +206,15 @@ function _makeMessageData( $value, $column )
 {
 	$data = unserialize( $value );
 
-	return '<div class="markdown-to-html" style="padding: 10px;">' . $data['message'] .	'</div>';
+	$msg = $data['message'];
+
+	if ( version_compare( ROSARIO_VERSION, '2.9-alpha', '<' ) )
+	{
+		// Not MarkDown.
+		$msg = nl2br( $msg );
+	}
+
+	return '<div class="markdown-to-html" style="padding: 10px;">' . $msg .	'</div>';
 }
 
 
@@ -214,14 +231,14 @@ function MessageOutput( $msg_id )
 	$current_user = GetCurrentMessagingUser();
 
 	// Get Message data.
-	$msg_sql = "SELECT m.DATETIME, m.FROM, m.RECIPIENTS, m.SUBJECT, m.DATA, uxm.STATUS
-		FROM MESSAGES m, USERXMESSAGE uxm
+	$msg_sql = "SELECT m.MESSAGE_ID, m.DATETIME, m.FROM, m.RECIPIENTS, m.SUBJECT, m.DATA, mxu.STATUS
+		FROM MESSAGES m, MESSAGEXUSER mxu
 		WHERE m.SYEAR='" . UserSyear() . "'
 		AND m.SCHOOL_ID='" . UserSchool() . "'
 		AND m.MESSAGE_ID='" . $msg_id . "'
-		AND m.MESSAGE_ID=uxm.MESSAGE_ID
-		AND uxm.KEY='" . $current_user['key'] . "'
-		AND uxm.USER_ID='" . $current_user['user_id'] . "'
+		AND m.MESSAGE_ID=mxu.MESSAGE_ID
+		AND mxu.KEY='" . $current_user['key'] . "'
+		AND mxu.USER_ID='" . $current_user['user_id'] . "'
 		LIMIT 1";
 
 	$msg_RET = DBGet(
@@ -303,7 +320,7 @@ function _changeMessageStatus( $msg_id, $status )
 
 	$current_user = GetCurrentMessagingUser();
 
-	$status_sql = "UPDATE USERXMESSAGE
+	$status_sql = "UPDATE MESSAGEXUSER
 		SET STATUS='" . $status . "'
 		WHERE KEY='" . $current_user['key'] . "'
 		AND USER_ID='" . $current_user['user_id'] . "'
@@ -312,4 +329,55 @@ function _changeMessageStatus( $msg_id, $status )
 	$status_RET = DBGet( DBQuery( $status_sql ) );
 
 	return (bool) $status_RET;
+}
+
+
+function _getSentMessageReadPercent( $msg_id )
+{
+	// Check message ID.
+	if ( ! $msg_id
+		|| (string) (int) $msg_id !== $msg_id
+		|| $msg_id < 1 )
+	{
+		return '';
+	}
+
+	$read_percent_sql = "SELECT
+		(SELECT count(USER_ID) FROM MESSAGEXUSER
+			WHERE STATUS NOT IN ( 'sent', 'unread' )
+			AND MESSAGE_ID='" . $msg_id . "') AS READ,
+		(SELECT count(USER_ID) FROM MESSAGEXUSER
+			WHERE STATUS<>'sent'
+			AND MESSAGE_ID='" . $msg_id . "') AS RECIPIENTS_TOTAL";
+
+	$read_percent_RET = DBGet( DBQuery( $read_percent_sql ) );
+
+	if ( ! $read_percent_RET
+		|| ! isset( $read_percent_RET[1]['READ'] ) )
+	{
+		return '';
+	}
+
+	$read = $read_percent_RET[1]['READ'];
+
+	$recipients_total = $read_percent_RET[1]['RECIPIENTS_TOTAL'];
+
+	$read_percent = number_format( ( $read / $recipients_total ) * 100 );
+
+	$views_data = GetMessagesViewsData();
+
+	if ( $read_percent == 100 )
+	{
+		$read_label = $views_data['read']['label'];
+	}
+	elseif ( $read_percent == 0 )
+	{
+		$read_label = $views_data['unread']['label'];
+	}
+	else
+	{
+		$read_label = strpintf( dgettext( 'Messaging', '%s Read' ), $read_percent . '%' );
+	}
+
+	return $read_label;
 }

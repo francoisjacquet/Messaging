@@ -29,11 +29,11 @@ DELETE FROM profile_exceptions WHERE modname='Messaging/Write.php';
  * User cross message table
  */
 --
--- Name: userxmessage; Type: TABLE; Schema: public; Owner: rosariosis; Tablespace: 
+-- Name: messagexuser; Type: TABLE; Schema: public; Owner: rosariosis; Tablespace: 
 --
-DROP INDEX userxmessage_ind;
+DROP INDEX messagexuser_ind;
 
-DROP TABLE userxmessage;
+DROP TABLE messagexuser;
 
 
 /**

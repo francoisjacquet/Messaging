@@ -52,10 +52,10 @@ INSERT INTO profile_exceptions (profile_id, modname, can_use, can_edit) VALUES (
  * User cross message table
  */
 --
--- Name: userxmessage; Type: TABLE; Schema: public; Owner: rosariosis; Tablespace: 
+-- Name: messagexuser; Type: TABLE; Schema: public; Owner: rosariosis; Tablespace: 
 --
 
-CREATE TABLE userxmessage (
+CREATE TABLE messagexuser (
     user_id numeric NOT NULL,
     key character varying(10),
     message_id numeric NOT NULL,
@@ -65,10 +65,10 @@ CREATE TABLE userxmessage (
 
 
 --
--- Name: userxmessage_ind; Type: INDEX; Schema: public; Owner: rosariosis; Tablespace: 
+-- Name: messagexuser_ind; Type: INDEX; Schema: public; Owner: rosariosis; Tablespace: 
 --
 
-CREATE INDEX userxmessage_ind ON userxmessage USING btree (user_id, key, status);
+CREATE INDEX messagexuser_ind ON messagexuser USING btree (user_id, key, status);
 
 
 

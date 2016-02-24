@@ -18,7 +18,7 @@ if ( isset( $_POST['send'] ) )
 		'reply_to_id' => isset( $_REQUEST['reply_to_id'] ) ? $_REQUEST['reply_to_id'] : '',
 		'recipients_key' => isset( $_REQUEST['recipients_key'] ) ? $_REQUEST['recipients_key'] : '',
 		'recipients_ids' => isset( $_REQUEST['recipients_ids'] ) ? $_REQUEST['recipients_ids'] : '',
-		'message' => isset( $_REQUEST['message'] ) ? $_REQUEST['message'] : '',
+		'message' => isset( $_POST['message'] ) ? $_POST['message'] : '', // Bypass strip_tags.
 		'subject' => isset( $_REQUEST['subject'] ) ? $_REQUEST['subject'] : '',
 	) );
 

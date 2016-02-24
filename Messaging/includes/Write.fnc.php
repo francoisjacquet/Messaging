@@ -63,9 +63,32 @@ function SendMessage( $msg )
 	// Serialize From.
 	$from = serialize( GetCurrentMessagingUser() );
 
-	// Serialize Data.
-	$data = serialize( array( 'message' => (string) $msg['message'] ) );
+	// Sanitize Message.
+	if ( version_compare( ROSARIO_VERSION, '2.9-alpha', '>=' ) )
+	{
+		// Is MarkDown.
+		require_once 'ProgramFunctions/MarkDownHTML.fnc.php';
 
+		$sanitized_msg = SanitizeMarkDown( $msg['message'] );
+	}
+	else
+	{
+		// Strip tags.
+		$sanitized_msg = str_replace( "'", '&#039;', strip_tags( $msg['message'] ) );
+	}
+
+	// Serialize Data.
+	$data = serialize( array( 'message' => $sanitized_msg ) );
+
+	$subject = $msg['subject'];
+
+	// Limit Subject to 100 chars.
+	if ( mb_strlen( $subject ) > 100 )
+	{
+		$subject = mb_substr( $subject, 0, 100 );
+	}
+
+	// Get new Message ID.
 	$msg_id_RET = DBGet( DBQuery( "SELECT " . db_seq_nextval( 'MESSAGES_SEQ' ) . " AS ID" ) );
 
 	$msg_id = $msg_id_RET[1]['ID'];
@@ -77,7 +100,7 @@ function SendMessage( $msg )
 		'" . UserSchool() . "',
 		'" . $from . "',
 		'" . $recipients . "',
-		'" . $msg['subject'] . "',
+		'" . $subject . "',
 		CURRENT_TIMESTAMP,
 		'" . $data . "'
 	)" );
@@ -133,7 +156,7 @@ function _saveMessageSenderRecipients( $msg_id, $key, $recipients_ids )
 
 	foreach ( (array) $recipients_ids as $recipient_id )
 	{
-		DBQuery( "INSERT INTO USERXMESSAGE VALUES(
+		DBQuery( "INSERT INTO MESSAGEXUSER VALUES(
 			'" . $recipient_id . "',
 			'" . $key . "',
 			'" . $msg_id . "',
@@ -144,7 +167,7 @@ function _saveMessageSenderRecipients( $msg_id, $key, $recipients_ids )
 	$sender = GetCurrentMessagingUser();
 
 	// Save Sender.
-	DBQuery( "INSERT INTO USERXMESSAGE VALUES(
+	DBQuery( "INSERT INTO MESSAGEXUSER VALUES(
 		'" . $sender['user_id'] . "',
 		'" . $sender['key'] . "',
 		'" . $msg_id . "',
@@ -171,7 +194,7 @@ function _getMessageRecipients( $recipients_key, $recipients_ids )
 
 		// Reply: just check the reply to ID is allowed (the message has been sent to him first).
 		$allowed_reply_RET = DBGet( DBQuery( "SELECT 1
-			FROM USERXMESSAGE
+			FROM MESSAGEXUSER
 			WHERE MESSAGE_ID='" . $reply_to_id . "'
 			AND USER_ID='" . $user['user_id'] . "'
 			AND KEY='" . $user['key'] . "'
@@ -557,14 +580,14 @@ function GetReplySubjectMessage( $msg_id )
 
 	// Get message Subject.
 	$subject_message_sql = "SELECT m.SUBJECT, m.DATA
-		FROM MESSAGES m, USERXMESSAGE uxm
+		FROM MESSAGES m, MESSAGEXUSER mxu
 		WHERE m.MESSAGE_ID='" . $msg_id . "'
 		AND m.SYEAR='" . UserSyear() . "'
 		AND m.SCHOOL_ID='" . UserSchool() . "'
-		AND uxm.MESSAGE_ID=m.MESSAGE_ID
-		AND uxm.KEY='" . $user['key'] . "'
-		AND uxm.USER_ID='" . $user['user_id'] . "'
-		AND uxm.STATUS<>'sent'";
+		AND mxu.MESSAGE_ID=m.MESSAGE_ID
+		AND mxu.KEY='" . $user['key'] . "'
+		AND mxu.USER_ID='" . $user['user_id'] . "'
+		AND mxu.STATUS<>'sent'";
 
 	$subject_message_RET = DBGet( DBQuery( $subject_message_sql ) );
 
