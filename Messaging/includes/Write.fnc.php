@@ -20,10 +20,12 @@ function SendMessage( $msg )
 	global $error;
 
 	// Check required parameters.
-	if ( ( ! isset( $msg['reply_to_id'] )
+	if ( ( ( ! isset( $msg['reply_to_id'] )
+				|| (string) $msg['reply_to_id'] === '' )
 			&& ( ! isset( $msg['recipients_key'] )
-				|| ! isset( $msg['recipients_ids'] ) ) )
-		|| (string) $msg['recipients_ids'] === ''
+				|| (string) $msg['recipients_key'] === ''
+				|| ! isset( $msg['recipients_ids'] )
+				|| (string) $msg['recipients_ids'] === '' ) )
 		|| ! isset( $msg['message'] )
 		|| ! isset( $msg['subject'] ) )
 	{
@@ -58,14 +60,22 @@ function SendMessage( $msg )
 		return false;
 	}
 
+	// Serialize From.
+	$from = serialize( GetCurrentMessagingUser() );
+
 	// Serialize Data.
 	$data = serialize( array( 'message' => (string) $msg['message'] ) );
 
+	$msg_id_RET = DBGet( DBQuery( "SELECT " . db_seq_nextval( 'MESSAGES_SEQ' ) . " AS ID" ) );
+
+	$msg_id = $msg_id_RET[1]['ID'];
+
 	// Save Message.
 	DBQuery( "INSERT INTO MESSAGES VALUES(
-		(SELECT " . db_seq_nextval( 'MESSAGES_SEQ' ) . "),
+		'" . $msg_id . "',
 		'" . UserSyear() . "',
 		'" . UserSchool() . "',
+		'" . $from . "',
 		'" . $recipients . "',
 		'" . $msg['subject'] . "',
 		CURRENT_TIMESTAMP,
@@ -74,7 +84,7 @@ function SendMessage( $msg )
 
 	if ( (string) (int) $msg['reply_to_id'] === $msg['reply_to_id'] )
 	{
-		$recipient = _getMessageFromIDColumn( $msg['reply_to_id'] );
+		$recipient = _getMessageFrom( $msg['reply_to_id'] );
 
 		if ( ! $recipient )
 		{
@@ -83,15 +93,14 @@ function SendMessage( $msg )
 			return false;
 		}
 
-		return _saveMessageRecipients( $msg_id, $recipient['COLUMN'], $recipient['ID'] );
+		return _saveMessageSenderRecipients( $msg_id, $recipient['key'], $recipient['user_id'] );
 	}
 
 	// Save Recipients in cross tables.
 	if ( $msg['recipients_key'] === 'student_id'
 		|| $msg['recipients_key'] === 'staff_id' )
 	{
-
-		return _saveMessageRecipients( $msg_id, $msg['recipients_key'], $msg['recipients_ids'] );
+		return _saveMessageSenderRecipients( $msg_id, $msg['recipients_key'], $msg['recipients_ids'] );
 	}
 	else
 	{
@@ -102,10 +111,9 @@ function SendMessage( $msg )
 }
 
 
-function _saveMessageRecipients( $msg_id, $column, $recipients_ids )
+function _saveMessageSenderRecipients( $msg_id, $key, $recipients_ids )
 {
-	if ( $column !== 'student_id'
-		|| $column !== 'staff_id'
+	if ( ! in_array( $key, array( 'student_id', 'staff_id' ) )
 		|| ! $recipients_ids
 		|| ! $msg_id )
 	{
@@ -123,26 +131,25 @@ function _saveMessageRecipients( $msg_id, $column, $recipients_ids )
 		$recipients_ids = array( $recipients_ids );
 	}
 
-	if ( $column === 'student_id' )
+	foreach ( (array) $recipients_ids as $recipient_id )
 	{
-		foreach ( (array) $recipients_ids as $recipient_id )
-		{
-			DBQuery( "INSERT INTO STUDENTXMESSAGE VALUES(
-				'" . $recipient_id . "',
-				'" . $msg_id . "'
-			)" );
-		}
+		DBQuery( "INSERT INTO USERXMESSAGE VALUES(
+			'" . $recipient_id . "',
+			'" . $key . "',
+			'" . $msg_id . "',
+			'unread'
+		)" );
 	}
-	else
-	{
-		foreach ( (array) $recipients_ids as $recipient_id )
-		{
-			DBQuery( "INSERT INTO USERXMESSAGE VALUES(
-				'" . $recipient_id . "',
-				'" . $msg_id . "'
-			)" );
-		}
-	}
+
+	$sender = GetCurrentMessagingUser();
+
+	// Save Sender.
+	DBQuery( "INSERT INTO USERXMESSAGE VALUES(
+		'" . $sender['user_id'] . "',
+		'" . $sender['key'] . "',
+		'" . $msg_id . "',
+		'sent'
+	)" );
 
 	return true;
 }
@@ -159,23 +166,16 @@ function _getMessageRecipients( $recipients_key, $recipients_ids )
 			return '';
 		}
 
+		// Get User.
+		$user = GetCurrentMessagingUser();
+
 		// Reply: just check the reply to ID is allowed (the message has been sent to him first).
-		if ( ! empty( $_SESSION['STUDENT_ID'] ) )
-		{
-			// Student:
-			$allowed_reply_RET = DBQuery( DBGet( "SELECT 1 FROM STUDENTXMESSAGE
-				WHERE MESSAGE_ID='" . $reply_to_id . "'
-				AND STUDENT_ID='" . $_SESSION['STUDENT_ID'] . "'
-				AND STATUS<>'sent'" ) );
-		}
-		else
-		{
-			// Staff:
-			$allowed_reply_RET = DBQuery( DBGet( "SELECT 1 FROM USERXMESSAGE
-				WHERE MESSAGE_ID='" . $reply_to_id . "'
-				AND USER_ID='" . User( 'STAFF' ) . "'
-				AND STATUS<>'sent'" ) );
-		}
+		$allowed_reply_RET = DBGet( DBQuery( "SELECT 1
+			FROM USERXMESSAGE
+			WHERE MESSAGE_ID='" . $reply_to_id . "'
+			AND USER_ID='" . $user['user_id'] . "'
+			AND KEY='" . $user['key'] . "'
+			AND STATUS<>'sent'" ) );
 
 		if ( ! $allowed_reply_RET )
 		{
@@ -183,7 +183,9 @@ function _getMessageRecipients( $recipients_key, $recipients_ids )
 		}
 
 		// Get Recipient == Original message From.
-		return _getMessageFromName( $reply_to_id );
+		$recipient = _getMessageFrom( $reply_to_id );
+
+		return $recipient['name'];
 	}
 
 	$recipients_keys = _getAllowedRecipientKeys( User( 'PROFILE' ) );
@@ -217,7 +219,7 @@ function _getMessageRecipients( $recipients_key, $recipients_ids )
 		&& $recipients_ids > 0 )
 	{
 		// One recipient.
-		$allowed_recipient = _checkMessageRecipient( $recipient_key, $recipient_ids );
+		$allowed_recipient = _checkMessageRecipient( $recipients_key, $recipients_ids );
 	}
 	elseif ( mb_strpos( $recipients_ids, ',' ) !== false )
 	{
@@ -226,7 +228,7 @@ function _getMessageRecipients( $recipients_key, $recipients_ids )
 
 		foreach ( (array) $recipients_ids_array as $recipient_id )
 		{
-			$allowed_recipient = _checkMessageRecipient( $recipient_key, $recipient_id );
+			$allowed_recipient = _checkMessageRecipient( $recipients_key, $recipient_id );
 		}
 	}
 
@@ -240,13 +242,13 @@ function _getMessageRecipients( $recipients_key, $recipients_ids )
 		$names_RET = DBGet( DBQuery(
 			"SELECT array_agg(FIRST_NAME||' '||LAST_NAME||coalesce(' '||NAME_SUFFIX,'')) AS NAMES
 			FROM STUDENTS
-			WHERE STUDENT_ID IN(" . $recipient_ids . ")" ) );
+			WHERE STUDENT_ID IN(" . $recipients_ids . ")" ) );
 	}
 	elseif ( $recipients_key === 'staff_id' )
 	{
 		$names_RET = DBGet( DBQuery( "SELECT array_agg(FIRST_NAME||' '||LAST_NAME) AS NAMES
 			FROM STAFF
-			WHERE STAFF_ID IN(" . $recipient_ids . ")" ) );
+			WHERE STAFF_ID IN(" . $recipients_ids . ")" ) );
 	}
 
 	if ( $names_RET
@@ -266,17 +268,17 @@ function _checkMessageRecipient( $recipient_key, $recipient_id )
 	$recipients_keys = _getAllowedRecipientKeys( User( 'PROFILE' ) );
 
 	// Check parameters.
-	if ( ! isset( $recipients_key )
-		|| ! in_array( $recipients_key, $recipients_keys )
-		|| ! isset( $recipients_id )
-		|| (string) $recipients_id === '' )
+	if ( ! isset( $recipient_key )
+		|| ! in_array( $recipient_key, $recipients_keys )
+		|| ! isset( $recipient_id )
+		|| (string) $recipient_id === '' )
 	{
 		return false;
 	}
 
 	// Check Recipient ID is allowed.
 	// Check not self.
-	if ( $recipients_key === 'staff_id'
+	if ( $recipient_key === 'staff_id'
 		&& $recipient_id === User( 'STAFF_ID' ) )
 	{
 		return false;
@@ -492,9 +494,9 @@ function _getTeacherAllowedParentsRecipients()
 			FROM STUDENTS_JOIN_USERS sju,STUDENT_ENROLLMENT sem,SCHEDULE sch 
 			WHERE sem.STUDENT_ID=sju.STUDENT_ID
 			AND sem.SYEAR='" . UserSyear() . "'
-			AND sem.SCHOOL_ID='" . UserSchool() . "''
+			AND sem.SCHOOL_ID='" . UserSchool() . "'
 			AND sch.STUDENT_ID=sem.STUDENT_ID
-			AND sch.SYEAR=s.SYEAR
+			AND sch.SYEAR=sem.SYEAR
 			AND sch.SCHOOL_ID=sem.SCHOOL_ID
 			AND sch.COURSE_PERIOD_ID='" . UserCoursePeriod() . "'" ) );
 
@@ -510,89 +512,75 @@ function _getTeacherAllowedParentsRecipients()
 }
 
 
-function _getMessageFromIDColumn( $message_id )
+function _getMessageFrom( $msg_id )
 {
 	static $from = array();
 
-	if ( ! $message_id )
+	if ( ! $msg_id )
 	{
-		return '';
+		return array();
 	}
 
-	if ( ! isset( $from[ $message_id ] ) )
+	if ( ! isset( $from[ $msg_id ] ) )
 	{
-		$from_RET = DBQuery( DBGet( "SELECT STUDENT_ID AS ID, 'student_id' AS COLUMN
-			FROM STUDENTXMESSAGE
-			WHERE MESSAGE_ID='" . $message_id . "'
-			AND STATUS='sent'" ) );
-
-		if ( ! $from_RET
-			|| ! isset( $from_RET[1]['ID'] ) )
-		{
-			$from_RET = DBQuery( DBGet( "SELECT STAFF_ID AS ID, 'staff_id' AS COLUMN
-				FROM USERXMESSAGE
-				WHERE MESSAGE_ID='" . $message_id . "'
-				AND STATUS='sent'" ) );
-		}
+		$from_RET = DBGet( DBQuery( "SELECT m.FROM
+			FROM MESSAGES m
+			WHERE m.MESSAGE_ID='" . $msg_id . "'" ) );
 
 		if ( $from_RET
-			&& isset( $from_RET[1]['ID'] ) )
+			&& isset( $from_RET[1]['FROM'] ) )
 		{
-			$from[ $message_id ] = array(
-				'ID' => $from_RET[1]['ID'],
-				'COLUMN' => $from_RET[1]['COLUMN']
-			);
+			$from[ $msg_id ] = unserialize( $from_RET[1]['FROM'] );
 		}
 		else
 		{
-			$from[ $message_id ] = array();
+			$from[ $msg_id ] = array();
 		}
 	}
 
-	return $from[ $message_id ];
+	return $from[ $msg_id ];
 }
 
 
-function _getMessageFromName( $message_id )
+function GetReplySubjectMessage( $msg_id )
 {
-	static $names = array();
-
-	if ( ! $message_id )
+	// Check message ID.
+	if ( ! $msg_id
+		|| (string) (int) $msg_id !== $msg_id
+		|| $msg_id < 1 )
 	{
-		return '';
+		return array();
 	}
 
-	if ( ! isset( $names[ $message_id ] ) )
+	// Get User.
+	$user = GetCurrentMessagingUser();
+
+	// Get message Subject.
+	$subject_message_sql = "SELECT m.SUBJECT, m.DATA
+		FROM MESSAGES m, USERXMESSAGE uxm
+		WHERE m.MESSAGE_ID='" . $msg_id . "'
+		AND m.SYEAR='" . UserSyear() . "'
+		AND m.SCHOOL_ID='" . UserSchool() . "'
+		AND uxm.MESSAGE_ID=m.MESSAGE_ID
+		AND uxm.KEY='" . $user['key'] . "'
+		AND uxm.USER_ID='" . $user['user_id'] . "'
+		AND uxm.STATUS<>'sent'";
+
+	$subject_message_RET = DBGet( DBQuery( $subject_message_sql ) );
+
+	if ( ! $subject_message_RET
+		|| ! isset( $subject_message_RET[1]['SUBJECT'] ) )
 	{
-		$from = _getMessageFromIDColumn( $message_id );
-
-		if ( isset( $from['COLUMN'] ) )
-		{
-			if ( $from['COLUMN'] === 'student_id' )
-			{
-				$name_RET = DBGet( DBQuery(
-					"SELECT FIRST_NAME||' '||LAST_NAME||coalesce(' '||NAME_SUFFIX,'') AS NAME
-					FROM STUDENTS
-					WHERE STUDENT_ID='" . $from['ID'] . "'" ) );
-			}
-			else
-			{
-				$name_RET = DBGet( DBQuery( "SELECT FIRST_NAME||' '||LAST_NAME AS NAME
-					FROM STAFF
-					WHERE STAFF_ID='" . $from['ID'] . "'" ) );
-			}
-		}
-
-		if ( $name_RET
-			&& isset( $name_RET['NAME'] ) )
-		{
-			$names[ $message_id ] = $name_RET['NAME'];
-		}
-		else
-		{
-			$names[ $message_id ] = '';
-		}
+		return array();
 	}
 
-	return $names[ $message_id ];
+	$subject = $subject_message_RET[1]['SUBJECT'];
+
+	$subject = sprintf( dgettext( 'Messaging', 'Re: %s' ), $subject );
+
+	$data = unserialize( $subject_message_RET[1]['DATA'] );
+
+	$message = $data['message'];
+
+	return array( 'subject' => $subject, 'message' => $message ); 
 }

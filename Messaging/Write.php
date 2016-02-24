@@ -5,31 +5,37 @@
  * @package Messaging module
  */
 
+// Include Common functions.
+require_once 'modules/Messaging/includes/Common.fnc.php';
+
 // Include Write functions.
 require_once 'modules/Messaging/includes/Write.fnc.php';
 
 if ( isset( $_POST['send'] ) )
 {
 	// Send message.
-	if ( ( isset( $_REQUEST['reply_to_id'] )
-			|| ( isset( $_REQUEST['recipients_key'] )
-				&& isset( $_REQUEST['recipients_ids'] ) ) )
-		&& isset( $_REQUEST['message'] )
-		&& isset( $_REQUEST['subject'] ) )
+	$sent = SendMessage( array(
+		'reply_to_id' => isset( $_REQUEST['reply_to_id'] ) ? $_REQUEST['reply_to_id'] : '',
+		'recipients_key' => isset( $_REQUEST['recipients_key'] ) ? $_REQUEST['recipients_key'] : '',
+		'recipients_ids' => isset( $_REQUEST['recipients_ids'] ) ? $_REQUEST['recipients_ids'] : '',
+		'message' => isset( $_REQUEST['message'] ) ? $_REQUEST['message'] : '',
+		'subject' => isset( $_REQUEST['subject'] ) ? $_REQUEST['subject'] : '',
+	) );
+
+	if ( $sent )
 	{
-		$sent = SendMessage(
-			array(
-				'reply_to_id' => $_REQUEST['reply_to_id'],
-				'recipients_key' => $_REQUEST['recipients_key'],
-				'recipients_ids' => $_REQUEST['recipients_ids'],
-				'message' => $_REQUEST['message'],
-				'subject' => $_REQUEST['subject'],
-		) );
+		$note[] = button( 'check', '', '', 'bigger' ) . '&nbsp;' . dgettext( 'Messaging', 'Message sent.' );
 	}
 	else
 	{
-		$error[] = dgettext( 'Messaging', 'The message could not be sent. Form elements are missing.' );
+		$error[] = dgettext( 'Messaging', 'The message could not be sent.' );
 	}
+}
+
+// Allow Edit if non admin.
+if ( User( 'PROFILE' ) !== 'admin' )
+{
+	$_ROSARIO['allow_edit'] = true;
 }
 
 DrawHeader( ProgramTitle() );
@@ -49,18 +55,52 @@ echo '<form method="POST" action="' . PreparePHP_SELF() . '">';
 
 // TODO: test when changing SYEAR / SCHOOL
 // Recipients key hidden field.
-echo '<input type="hidden" name="recipients_key" value="staff_id" />';
+echo '<input type="hidden" name="recipients_key" value="" />';
 
 // Recipients IDs hidden field.
-echo '<input type="hidden" name="recipients_ids" value="1" />';
+echo '<input type="hidden" name="recipients_ids" value="" />';
+
+$subject = $original_message = '';
+
+// If is reply, get Subject as "Re: Original subject".
+if ( isset( $_REQUEST['reply_to_id'] ) )
+{
+	$reply = GetReplySubjectMessage( $_REQUEST['reply_to_id'] );
+
+	if ( $reply )
+	{
+		echo '<input type="hidden" name="reply_to_id" value="' . $_REQUEST['reply_to_id'] . '" />';
+
+		$subject = $reply['subject'];
+
+		$original_message = $reply['message'];
+	}
+}
 
 // Subject field.
-echo TextInput();
+DrawHeader( TextInput(
+	$subject,
+	'subject',
+	_( 'Subject' ),
+	'required maxlength="100" class="width-100p"',
+	false
+) );
+
+// Original message if Reply.
+if ( $original_message )
+{
+	DrawHeader( '<div class="markdown-to-html" style="padding: 10px;">' . $original_message . '</div>' );
+}
 
 // Message field.
-echo TextAreaInput();
+DrawHeader( TextAreaInput(
+	'',
+	'message',
+	_( 'Message' ),
+	'required'
+) );
 
 // Send button.
-echo SubmitButton( dgettext( 'Send', 'Messaging' ), 'send' );
-
-echo '</form>';
+echo '<br /><div class="center">' .
+	SubmitButton( dgettext( 'Messaging', 'Send' ), 'send' ) .
+	'</div></form>';
