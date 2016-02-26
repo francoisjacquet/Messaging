@@ -252,8 +252,7 @@ function MessageOutput( $msg_id )
 		)
 	);
 
-	if ( ! $msg_RET
-		|| ! isset( $msg_RET[1] ) )
+	if ( ! isset( $msg_RET[1] ) )
 	{
 		return false;
 	}
@@ -352,8 +351,7 @@ function _getSentMessageReadPercent( $msg_id )
 
 	$read_percent_RET = DBGet( DBQuery( $read_percent_sql ) );
 
-	if ( ! $read_percent_RET
-		|| ! isset( $read_percent_RET[1]['READ'] ) )
+	if ( ! isset( $read_percent_RET[1]['READ'] ) )
 	{
 		return '';
 	}

@@ -61,7 +61,7 @@ function SendMessage( $msg )
 	}
 
 	// Serialize From.
-	$from = serialize( GetCurrentMessagingUser() );
+	$from = DBEscapeString( serialize( GetCurrentMessagingUser() ) );
 
 	// Sanitize Message.
 	if ( version_compare( ROSARIO_VERSION, '2.9-alpha', '>=' ) )
@@ -211,7 +211,7 @@ function _getMessageRecipients( $recipients_key, $recipients_ids )
 		return $recipient['name'];
 	}
 
-	$recipients_keys = _getAllowedRecipientKeys( User( 'PROFILE' ) );
+	$recipients_keys = GetAllowedRecipientsKeys( User( 'PROFILE' ) );
 
 	// Check parameters.
 	if ( ! isset( $recipients_key )
@@ -274,8 +274,7 @@ function _getMessageRecipients( $recipients_key, $recipients_ids )
 			WHERE STAFF_ID IN(" . $recipients_ids . ")" ) );
 	}
 
-	if ( $names_RET
-		&& isset( $names_RET[1]['NAMES'] ) )
+	if ( isset( $names_RET[1]['NAMES'] ) )
 	{
 		// For example: {"Student Student","Andrea Mazariegos Jr"}.
 		// Return Student Student, Andrea Mazariegos Jr.
@@ -288,7 +287,7 @@ function _getMessageRecipients( $recipients_key, $recipients_ids )
 
 function _checkMessageRecipient( $recipient_key, $recipient_id )
 {
-	$recipients_keys = _getAllowedRecipientKeys( User( 'PROFILE' ) );
+	$recipients_keys = GetAllowedRecipientsKeys( User( 'PROFILE' ) );
 
 	// Check parameters.
 	if ( ! isset( $recipient_key )
@@ -371,7 +370,7 @@ function _checkMessageRecipient( $recipient_key, $recipient_id )
 }
 
 
-function _getAllowedRecipientKeys( $profile )
+function GetAllowedRecipientsKeys( $profile )
 {
 	if ( $profile === 'student' )
 	{
@@ -408,8 +407,7 @@ function _getAllowedAdminRecipients()
 			AND SYEAR='" . UserSyear() . "'
 			AND (SCHOOLS IS NULL OR position('," . UserSchool() . ",' IN SCHOOLS)>0)" ) );
 
-		if ( $allowed_ids_RET
-			&& $allowed_ids_RET[1]['ALLOWED_IDS'] )
+		if ( isset( $allowed_ids_RET[1]['ALLOWED_IDS'] ) )
 		{
 			// For example: {70,10,1}.
 			$allowed_ids = explode( ',', mb_substr( $allowed_ids_RET[1]['ALLOWED_IDS'], 1, -1 ) );
@@ -458,8 +456,7 @@ function _getStudentAllowedTeachersRecipients( $student_id )
 			AND cp.SYEAR=sch.SYEAR
 			AND cp.SCHOOL_ID=sch.SCHOOL_ID" ) );
 
-		if ( $allowed_ids_RET
-			&& $allowed_ids_RET[1]['ALLOWED_IDS'] )
+		if ( isset( $allowed_ids_RET[1]['ALLOWED_IDS'] ) )
 		{
 			// For example: {70,10,1}.
 			$allowed_ids[ $student_id ] = explode( ',', mb_substr( $allowed_ids_RET[1]['ALLOWED_IDS'], 1, -1 ) );
@@ -523,8 +520,7 @@ function _getTeacherAllowedParentsRecipients()
 			AND sch.SCHOOL_ID=sem.SCHOOL_ID
 			AND sch.COURSE_PERIOD_ID='" . UserCoursePeriod() . "'" ) );
 
-		if ( $allowed_ids_RET
-			&& $allowed_ids_RET[1]['ALLOWED_IDS'] )
+		if ( isset( $allowed_ids_RET[1]['ALLOWED_IDS'] ) )
 		{
 			// For example: {70,10,1}.
 			$allowed_ids = explode( ',', mb_substr( $allowed_ids_RET[1]['ALLOWED_IDS'], 1, -1 ) );
@@ -550,8 +546,7 @@ function _getMessageFrom( $msg_id )
 			FROM MESSAGES m
 			WHERE m.MESSAGE_ID='" . $msg_id . "'" ) );
 
-		if ( $from_RET
-			&& isset( $from_RET[1]['FROM'] ) )
+		if ( isset( $from_RET[1]['FROM'] ) )
 		{
 			$from[ $msg_id ] = unserialize( $from_RET[1]['FROM'] );
 		}
@@ -591,8 +586,7 @@ function GetReplySubjectMessage( $msg_id )
 
 	$subject_message_RET = DBGet( DBQuery( $subject_message_sql ) );
 
-	if ( ! $subject_message_RET
-		|| ! isset( $subject_message_RET[1]['SUBJECT'] ) )
+	if ( ! isset( $subject_message_RET[1]['SUBJECT'] ) )
 	{
 		return array();
 	}
