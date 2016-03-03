@@ -26,10 +26,15 @@ if ( isset( $_POST['send'] ) )
 	{
 		$note[] = button( 'check', '', '', 'bigger' ) . '&nbsp;' . dgettext( 'Messaging', 'Message sent.' );
 	}
-	else
+	elseif ( ! $error )
 	{
 		$error[] = dgettext( 'Messaging', 'The message could not be sent.' );
 	}
+}
+elseif ( isset( $_REQUEST['reply_to_id'] )
+		&& $_REQUEST['reply_to_id'] )
+{
+	$reply = GetReplySubjectMessage( $_REQUEST['reply_to_id'] );
 }
 
 
@@ -40,20 +45,30 @@ if ( User( 'PROFILE' ) !== 'admin' )
 }
 
 
-DrawHeader( ProgramTitle() );
+$title = ProgramTitle();
 
-if ( isset( $error ) )
+if ( SchoolInfo( 'SCHOOLS_NB' ) > 1
+	&& ( User( 'PROFILE' ) === 'admin'
+		|| User( 'PROFILE' ) === 'teacher' ) )
+{
+	// If more than 1 school, mention current school.
+	$title .= ' (' . SchoolInfo( 'TITLE' ) . ')';
+}
+
+DrawHeader( $title );
+
+if ( isset( $error ) ) // To remove in 2.9!
 {
 	echo ErrorMessage( $error );
 }
 
-if ( isset( $note ) )
+if ( isset( $note ) ) // To remove in 2.9!
 {
 	echo ErrorMessage( $note, 'note' );
 }
 
 
-if ( ! isset( $_REQUEST['reply_to_id'] ) )
+if ( ! $reply )
 {
 	$recipients_key = '';
 
@@ -67,39 +82,80 @@ if ( ! isset( $_REQUEST['reply_to_id'] ) )
 
 		echo ErrorMessage( $error, 'fatal' );
 	}
-	elseif ( count( $recipients_keys ) > 1
-		&& ! isset( $_REQUEST['recipients_key'] ) )
+	elseif ( count( $recipients_keys ) > 1 )
 	{
-		// If more than one allowed recipients key, display choose screen.
-		echo PopTable( 'header', dgettext( 'Messaging', 'Recipients' ) );
-
-		echo '<form method="GET" action="' . PreparePHP_SELF() . '">';
-
-		$div = $allow_na = false;
-
-		// Students or Users radio input.
-		echo '<br />' . RadioInput(
-			'student_id',
-			'recipients_key',
-			'',
-			array(
-				'student_id' => _( 'Students' ),
-				'staff_id' => _( 'Users' ),
-			),
-			$allow_na,
-			'required',
-			$div
+		$search_staff_url = PreparePHP_SELF(
+			$_REQUEST,
+			array( 'search_modfunc', 'reply_to_id', 'teacher_staff' ),
+			array( 'recipients_key' => 'staff_id' )
 		);
 
-		// Redirect to search screen.
-		echo '<input type="hidden" name="redirect_to_search" value="true" />';
+		$search_teacher_staff_url = PreparePHP_SELF(
+			$_REQUEST,
+			array( 'search_modfunc', 'reply_to_id' ),
+			array( 'recipients_key' => 'staff_id', 'teacher_staff' => 'Y' )
+		);
 
-		// Submit button.
-		echo '<br /><div class="center">' .
-			SubmitButton( _( 'Submit' ), 'choose_recipients' ) .
-			'</div></form>';
+		$search_student_url = PreparePHP_SELF(
+			$_REQUEST,
+			array( 'search_modfunc', 'reply_to_id', 'teacher_staff' ),
+			array( 'recipients_key' => 'student_id' )
+		);
 
-		echo PopTable( 'footer' );
+		// If more than one allowed recipients key, display Users | Students.
+		// For Teachers, it will be Parents | Students | Staff.
+		$header = '<a href="' . $search_staff_url . '"><b>' .
+			( User( 'PROFILE' ) === 'admin' ? _( 'Users' ) : _( 'Parents' ) ) . '</b></a>';
+		$header .= ' | <a href="' . $search_student_url . '"><b>' .
+			_( 'Students' ) . '</b></a>';
+
+		if ( User( 'PROFILE' ) === 'teacher' )
+		{
+			$header .= ' | <a href="' . $search_teacher_staff_url . '"><b>' .
+				_( 'Staff' ) . '</b></a>';
+		}
+
+		echo DrawHeader( $header );
+
+		// Search screen.
+		if ( User( 'PROFILE' ) === 'admin'
+			|| User( 'PROFILE' ) === 'teacher' )
+		{
+			if ( isset( $_REQUEST['recipients_key'] )
+				&& in_array( $_REQUEST['recipients_key'], $recipients_keys ) )
+			{
+				$recipients_key = $_REQUEST['recipients_key'];
+			}
+			else
+			{
+				// Defaults to student_id for Teachers, to staff_id for Admins.
+				$recipients_key = User( 'PROFILE' ) === 'teacher' ? 'student_id' : 'staff_id';
+			}
+
+			if ( ! isset( $_REQUEST['search_modfunc'] )
+				&& ! isset( $_REQUEST['teacher_staff'] ) )
+			{
+				$extra['new'] = true;
+
+				// Pass recipients_key to next screen.
+				$extra['action'] = '&recipients_key=' . $recipients_key;
+
+				if ( User( 'PROFILE' ) === 'teacher'
+					&& $recipients_key === 'staff_id' )
+				{
+					// Find a Parent.
+					$extra['search_title'] = dgettext( 'Messaging', 'Find a Parent' );
+
+					$extra['profile'] = 'parent';
+				}
+
+				// Only for admins and teachers.
+				Search( $recipients_key, $extra );
+
+				// Unset Recipients key so Write form is not displayed.
+				$recipients_key = '';
+			}
+		}
 	}
 	else
 	{
@@ -113,27 +169,11 @@ if ( ! isset( $_REQUEST['reply_to_id'] ) )
 			$recipients_key = $_REQUEST['recipients_key'];
 		}
 	}
-
-	if ( $recipients_key )
-	{
-		// Search screen.
-		if ( User( 'PROFILE' ) === 'admin'
-			|| User( 'PROFILE' ) === 'teacher' )
-		{
-			// Only for admins and teachers.
-			// TODO: try to allow Admin search for Teachers.
-			echo 'ici';
-
-			// Unset Recipients key so Write form is not displayed.
-			$recipients_key = '';
-		}
-	}
 }
 
 
 // Is reply or Recipients key set.
-if ( ( isset( $_REQUEST['reply_to_id'] )
-		&& $_REQUEST['reply_to_id'] )
+if ( $reply
 	|| $recipients_key )
 {
 	// Write form.
@@ -146,19 +186,17 @@ if ( ( isset( $_REQUEST['reply_to_id'] )
 	$subject = $original_message = '';
 
 	// If is reply, get Subject as "Re: Original subject".
-	if ( isset( $_REQUEST['reply_to_id'] ) )
+	if ( $reply )
 	{
-		$reply = GetReplySubjectMessage( $_REQUEST['reply_to_id'] );
+		echo '<input type="hidden" name="reply_to_id" value="' . $_REQUEST['reply_to_id'] . '" />';
 
-		if ( $reply )
-		{
-			echo '<input type="hidden" name="reply_to_id" value="' . $_REQUEST['reply_to_id'] . '" />';
+		$subject = $reply['subject'];
 
-			$subject = $reply['subject'];
-
-			$original_message = $reply['message'];
-		}
+		$original_message = $reply['message'];
 	}
+
+	// Send button.
+	echo DrawHeader( '', SubmitButton( dgettext( 'Messaging', 'Send' ), 'send' ) );
 
 	// Subject field.
 	DrawHeader( TextInput(
@@ -182,6 +220,100 @@ if ( ( isset( $_REQUEST['reply_to_id'] )
 		_( 'Message' ),
 		'required'
 	) );
+
+
+	// Search results.
+	if ( ( User( 'PROFILE' ) === 'admin'
+			|| User( 'PROFILE' ) === 'teacher' )
+		&& isset( $_REQUEST['search_modfunc'] )
+		&& ! $reply )
+	{
+		// Choose recipients checkboxes.
+		$extra['SELECT'] = ",'' AS CHECKBOX";
+		$extra['functions'] = array( 'CHECKBOX' => '_makeWriteChooseCheckbox' );
+		$extra['columns_before'] = array(
+			'CHECKBOX' => '</a><input type="checkbox" value="Y" checked name="controller" onclick="checkAll(this.form,this.checked,\'recipients_ids\');" /><A>'
+		);
+
+		// Force search.
+		$extra['new'] = true;
+
+		// No ListOutput search form.
+		$extra['options']['search'] = false;
+
+		if ( $recipients_key === 'staff_id' )
+		{
+			// Do not send message to self.
+			$extra['WHERE'] .= " AND s.STAFF_ID<>'" . User( 'STAFF_ID' ) . "' ";
+		}
+
+		// Deactivate Search All Schools.
+		$_REQUEST['_search_all_schools'] = false;
+
+		// Only for admins and teachers.
+		// TODO: try to allow Admin search for Teachers.
+		Search( $recipients_key, $extra );
+	}
+	elseif ( ! $reply )
+	{
+		$value = $allow_na = $div = false;
+
+		// Multiple select input.
+		$extra = 'multiple title="' . _( 'Hold the CTRL key down to select multiple options' ) . '"';
+
+		$add_label = '';
+
+		// TODO add current school / student for Teachers / Parents.
+		/*if ( User( 'PROFILE' ) === 'teacher'
+			&& SchoolInfo( 'SCHOOLS_NB' ) > 1 )
+		{
+			// If teaches in more than one school.
+			$add_label = ' (' . SchoolInfo( 'TITLE' ) . ')';
+		}
+		elseif ( User( 'PROFILE' ) === 'parent' )
+		{
+			$student_name_RET = DBGet( DBQuery( "SELECT s.LAST_NAME||', '||s.FIRST_NAME AS NAME
+					FROM STUDENTS s,STUDENT_ENROLLMENT se 
+					WHERE se.STUDENT_ID='" . UserStudentID() . "'
+					AND s.STUDENT_ID=se.STUDENT_ID 
+					AND se.SYEAR='" . UserSyear() . "'" );
+
+			// If more than one student.
+			$add_label = ' (' . ')';
+		}*/
+		
+		// Display Teachers select.
+		$teachers_options = GetRecipientsInfo( User( 'PROFILE' ), 'teacher' );
+
+
+		$teachers_label = _( 'Teachers' ) . $add_label;
+
+
+		// Display Admins select.
+		$admins_options = GetRecipientsInfo( User( 'PROFILE' ), 'admin' );
+
+		$admins_label = _( 'Administrators' ) . $add_label;
+
+		DrawHeader( SelectInput(
+				$value,
+				'recipients_ids[]',
+				$teachers_label,
+				$teachers_options,
+				$allow_na,
+				$extra,
+				$div
+			),
+			SelectInput(
+				$value,
+				'recipients_ids[]',
+				$admins_label,
+				$admins_options,
+				$allow_na,
+				$extra,
+				$div
+			)
+		);
+	}
 
 	// Send button.
 	echo '<br /><div class="center">' .

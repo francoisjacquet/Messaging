@@ -25,7 +25,7 @@ function SendMessage( $msg )
 			&& ( ! isset( $msg['recipients_key'] )
 				|| (string) $msg['recipients_key'] === ''
 				|| ! isset( $msg['recipients_ids'] )
-				|| (string) $msg['recipients_ids'] === '' ) )
+				|| ! $msg['recipients_ids'] ) )
 		|| ! isset( $msg['message'] )
 		|| ! isset( $msg['subject'] ) )
 	{
@@ -49,7 +49,7 @@ function SendMessage( $msg )
 	}
 	else
 	{
-		$recipients = _getMessageRecipients( (string) $msg['recipients_key'], (string) $msg['recipients_ids'] );
+		$recipients = _getMessageRecipients( (string) $msg['recipients_key'], (array) $msg['recipients_ids'] );
 	}
 
 	// Check & Get Recipients.
@@ -143,17 +143,6 @@ function _saveMessageSenderRecipients( $msg_id, $key, $recipients_ids )
 		return false;
 	}
 
-	// Get Recipients IDs array.
-	if ( mb_strpos( $recipients_ids, ',' ) !== false )
-	{
-		$recipients_ids = explode( ',', $recipients_ids );
-	}
-	else
-	{
-		// Single Recipient.
-		$recipients_ids = array( $recipients_ids );
-	}
-
 	foreach ( (array) $recipients_ids as $recipient_id )
 	{
 		DBQuery( "INSERT INTO MESSAGEXUSER VALUES(
@@ -216,8 +205,7 @@ function _getMessageRecipients( $recipients_key, $recipients_ids )
 	// Check parameters.
 	if ( ! isset( $recipients_key )
 		|| ! in_array( $recipients_key, $recipients_keys )
-		|| ! isset( $recipients_ids )
-		|| (string) $recipients_ids === '' )
+		|| ! $recipients_ids )
 	{
 		return '';
 	}
@@ -238,21 +226,11 @@ function _getMessageRecipients( $recipients_key, $recipients_ids )
 		// All.
 		return sprintf( 'All %s', $recipients_all_labels[ $recipients_key ] );
 	}
-	elseif ( (string) (int) $recipients_ids === $recipients_ids
-		&& $recipients_ids > 0 )
-	{
-		// One recipient.
-		$allowed_recipient = _checkMessageRecipient( $recipients_key, $recipients_ids );
-	}
-	elseif ( mb_strpos( $recipients_ids, ',' ) !== false )
-	{
-		// Recipients.
-		$recipients_ids_array =  explode( ',', $recipients_ids );
 
-		foreach ( (array) $recipients_ids_array as $recipient_id )
-		{
-			$allowed_recipient = _checkMessageRecipient( $recipients_key, $recipient_id );
-		}
+	// Recipients.
+	foreach ( (array) $recipients_ids as $recipient_id )
+	{
+		$allowed_recipient = _checkMessageRecipient( $recipients_key, $recipient_id );
 	}
 
 	if ( ! $allowed_recipient )
@@ -263,15 +241,15 @@ function _getMessageRecipients( $recipients_key, $recipients_ids )
 	if ( $recipients_key === 'student_id' )
 	{
 		$names_RET = DBGet( DBQuery(
-			"SELECT array_agg(FIRST_NAME||' '||LAST_NAME||coalesce(' '||NAME_SUFFIX,'')) AS NAMES
+			"SELECT array_agg(FIRST_NAME||' '||LAST_NAME||coalesce(' '||NAME_SUFFIX,' ')) AS NAMES
 			FROM STUDENTS
-			WHERE STUDENT_ID IN(" . $recipients_ids . ")" ) );
+			WHERE STUDENT_ID IN('" . implode( "','", $recipients_ids ) . "')" ) );
 	}
 	elseif ( $recipients_key === 'staff_id' )
 	{
 		$names_RET = DBGet( DBQuery( "SELECT array_agg(FIRST_NAME||' '||LAST_NAME) AS NAMES
 			FROM STAFF
-			WHERE STAFF_ID IN(" . $recipients_ids . ")" ) );
+			WHERE STAFF_ID IN('" . implode( "','", $recipients_ids ) . "')" ) );
 	}
 
 	if ( isset( $names_RET[1]['NAMES'] ) )
@@ -293,7 +271,7 @@ function _checkMessageRecipient( $recipient_key, $recipient_id )
 	if ( ! isset( $recipient_key )
 		|| ! in_array( $recipient_key, $recipients_keys )
 		|| ! isset( $recipient_id )
-		|| (string) $recipient_id === '' )
+		|| (string) (int) $recipient_id !== $recipient_id )
 	{
 		return false;
 	}
@@ -330,19 +308,19 @@ function _checkMessageRecipient( $recipient_key, $recipient_id )
 				{
 					// Student: allow its Teachers + Admin staff.
 					$allowed += _getStudentAllowedTeachersRecipients( $_SESSION['STUDENT_ID'] );
-					$allowed += _getStudentAllowedAdminRecipients();
+					$allowed += _getStudentAllowedAdminsRecipients();
 				}
 				elseif ( User( 'PROFILE' ) === 'parent' )
 				{
 					// Parent: allow students' Teachers + Admin staff.
 					$allowed += _getParentAllowedTeachersRecipients();
-					$allowed += _getParentAllowedAdminRecipients();
+					$allowed += _getParentAllowedAdminsRecipients();
 				}
 				elseif ( User( 'PROFILE' ) === 'teacher' )
 				{
 					// Teachers: Parents of related students + Admin staff + other Teachers.
 					$allowed += _getTeacherAllowedParentsRecipients(); // see SetUserStaffID()!
-					$allowed += _getTeacherAllowedAdminRecipients();
+					$allowed += _getTeacherAllowedAdminsRecipients();
 				}
 
 				if ( ! in_array( $recipient_id, $allowed ) )
@@ -395,7 +373,7 @@ function GetAllowedRecipientsKeys( $profile )
 }
 
 
-function _getAllowedAdminRecipients()
+function _getAllowedAdminsRecipients()
 {
 	static $allowed_ids = array();
 
@@ -418,21 +396,50 @@ function _getAllowedAdminRecipients()
 }
 
 
-function _getStudentAllowedAdminRecipients()
+function _getAllowedTeachersRecipients()
 {
-	return _getAllowedAdminRecipients();
+	static $allowed_ids = array();
+
+	if ( ! $allowed_ids )
+	{
+		$allowed_ids_RET = DBGet( DBQuery( "SELECT array_agg(STAFF_ID) as ALLOWED_IDS
+			FROM STAFF
+			WHERE PROFILE='teacher'
+			AND SYEAR='" . UserSyear() . "'
+			AND (SCHOOLS IS NULL OR position('," . UserSchool() . ",' IN SCHOOLS)>0)" ) );
+
+		if ( isset( $allowed_ids_RET[1]['ALLOWED_IDS'] ) )
+		{
+			// For example: {70,10,1}.
+			$allowed_ids = explode( ',', mb_substr( $allowed_ids_RET[1]['ALLOWED_IDS'], 1, -1 ) );
+		}
+	}
+
+	return $allowed_ids;
 }
 
 
-function _getParentAllowedAdminRecipients()
+function _getStudentAllowedAdminsRecipients()
 {
-	return _getAllowedAdminRecipients();
+	return _getAllowedAdminsRecipients();
 }
 
 
-function _getTeacherAllowedAdminRecipients()
+function _getParentAllowedAdminsRecipients()
 {
-	return _getAllowedAdminRecipients();
+	return _getAllowedAdminsRecipients();
+}
+
+
+function _getTeacherAllowedAdminsRecipients()
+{
+	return _getAllowedAdminsRecipients();
+}
+
+
+function _getTeacherAllowedTeachersRecipients()
+{
+	return _getAllowedTeachersRecipients();
 }
 
 
@@ -600,4 +607,85 @@ function GetReplySubjectMessage( $msg_id )
 	$message = $data['message'];
 
 	return array( 'subject' => $subject, 'message' => $message ); 
+}
+
+
+function GetRecipientsInfo( $user_profile, $recipients_profile = 'teacher' )
+{
+	if ( ! $user_profile
+		|| ! $recipients_profile )
+	{
+		return null;
+	}
+
+	if ( $user_profile === 'teacher' )
+	{
+		if ( $recipients_profile === 'teacher' )
+		{
+			$allowed_ids = _getTeacherAllowedTeachersRecipients();
+		}
+		else
+		{
+			$allowed_ids = _getTeacherAllowedAdminsRecipients();
+		}
+	}
+	elseif ( $user_profile === 'student' )
+	{
+		if ( $recipients_profile === 'teacher' )
+		{
+			$allowed_ids = _getStudentAllowedTeachersRecipients();
+		}
+		else
+		{
+			$allowed_ids = _getStudentAllowedAdminsRecipients();
+		}
+	}
+	elseif ( $user_profile === 'parent' )
+	{
+		if ( $recipients_profile === 'teacher' )
+		{
+			$allowed_ids = _getParentAllowedTeachersRecipients();
+		}
+		else
+		{
+			$allowed_ids = _getParentAllowedAdminsRecipients();
+		}
+	}
+
+	if ( ! $allowed_ids )
+	{
+		return null;
+	}
+
+	// Get user name.
+	// TODO get Teacher course for Parents & Students => "Name (Course)".
+	$users_info_sql = "SELECT STAFF_ID, FIRST_NAME||' '||LAST_NAME AS NAME,
+		(SELECT up.TITLE FROM USER_PROFILES up WHERE s.PROFILE_ID NOT IN (1,2) AND s.PROFILE_ID=up.ID) AS PROFILE
+		FROM STAFF s
+		WHERE s.STAFF_ID IN ('" . implode( "','", $allowed_ids ) . "')
+		ORDER BY NAME";
+
+	$users_info_RET = DBGet( DBQuery( $users_info_sql ) );
+
+	$users_options = array();
+
+	foreach ( (array) $users_info_RET as $users_info )
+	{
+		// Add profile to name if profile != default teacher (2) or admin (1).
+		$option = $users_info['NAME'] . ( $users_info['PROFILE'] ? ' (' . $users_info['PROFILE'] . ')' : '' );
+
+		$users_options[ $users_info['STAFF_ID'] ] = $option;
+	}
+
+	return $users_options;
+}
+
+
+function _makeWriteChooseCheckbox( $value, $title )
+{
+	global $THIS_RET;
+
+	$user_id = isset( $THIS_RET['STAFF_ID'] ) ? $THIS_RET['STAFF_ID'] : $THIS_RET['STUDENT_ID'];
+
+	return '<input type="checkbox" name="recipients_ids[]" value="' . $user_id . '" checked />';
 }
