@@ -48,8 +48,7 @@ if ( User( 'PROFILE' ) !== 'admin' )
 $title = ProgramTitle();
 
 if ( SchoolInfo( 'SCHOOLS_NB' ) > 1
-	&& ( User( 'PROFILE' ) === 'admin'
-		|| User( 'PROFILE' ) === 'teacher' ) )
+	&& User( 'PROFILE' ) !== 'student' )
 {
 	// If more than 1 school, mention current school.
 	$title .= ' (' . SchoolInfo( 'TITLE' ) . ')';
@@ -57,15 +56,9 @@ if ( SchoolInfo( 'SCHOOLS_NB' ) > 1
 
 DrawHeader( $title );
 
-if ( isset( $error ) ) // To remove in 2.9!
-{
-	echo ErrorMessage( $error );
-}
+echo ErrorMessage( $error );
 
-if ( isset( $note ) ) // To remove in 2.9!
-{
-	echo ErrorMessage( $note, 'note' );
-}
+echo ErrorMessage( $note, 'note' );
 
 
 if ( ! $reply )

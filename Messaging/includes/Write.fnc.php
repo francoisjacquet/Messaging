@@ -307,20 +307,20 @@ function _checkMessageRecipient( $recipient_key, $recipient_id )
 				if ( User( 'PROFILE' ) === 'student' )
 				{
 					// Student: allow its Teachers + Admin staff.
-					$allowed += _getStudentAllowedTeachersRecipients( $_SESSION['STUDENT_ID'] );
-					$allowed += _getStudentAllowedAdminsRecipients();
+					$allowed = _getStudentAllowedTeachersRecipients( $_SESSION['STUDENT_ID'] );
+					$allowed = array_merge( $allowed, _getStudentAllowedAdminsRecipients() );
 				}
 				elseif ( User( 'PROFILE' ) === 'parent' )
 				{
 					// Parent: allow students' Teachers + Admin staff.
-					$allowed += _getParentAllowedTeachersRecipients();
-					$allowed += _getParentAllowedAdminsRecipients();
+					$allowed = _getParentAllowedTeachersRecipients();
+					$allowed = array_merge( $allowed, _getParentAllowedAdminsRecipients() );
 				}
 				elseif ( User( 'PROFILE' ) === 'teacher' )
 				{
 					// Teachers: Parents of related students + Admin staff + other Teachers.
-					$allowed += _getTeacherAllowedParentsRecipients(); // see SetUserStaffID()!
-					$allowed += _getTeacherAllowedAdminsRecipients();
+					$allowed = _getTeacherAllowedParentsRecipients(); // see SetUserStaffID()!
+					$allowed = array_merge( $allowed, _getTeacherAllowedAdminsRecipients() );
 				}
 
 				if ( ! in_array( $recipient_id, $allowed ) )
@@ -485,20 +485,22 @@ function _getParentAllowedTeachersRecipients()
 
 	if ( ! $allowed_ids )
 	{
-		// Get Parent Students.
+		// Get Parent Students for current school.
 		$students_RET = DBGet( DBQuery( "SELECT sju.STUDENT_ID
 			FROM STUDENTS s,STUDENTS_JOIN_USERS sju,STUDENT_ENROLLMENT se 
 			WHERE s.STUDENT_ID=sju.STUDENT_ID 
 			AND sju.STAFF_ID='" . User( 'STAFF_ID' ) . "' 
-			AND se.SYEAR='" . UserSyear() . "' 
+			AND se.SYEAR='" . UserSyear() . "'
+			AND se.SCHOOL_ID ='" . UserSchool() . "'
 			AND se.STUDENT_ID=sju.STUDENT_ID 
 			AND ('" . DBDate() . "'>=se.START_DATE
 				AND ('" . DBDate() . "'<=se.END_DATE
 					OR se.END_DATE IS NULL ) )" ) );
 
+		// Get each student's Teachers.
 		foreach ( (array) $students_RET as $student )
 		{
-			$allowed_ids += _getStudentAllowedTeachersRecipients( $student['STUDENT_ID'] );
+			$allowed_ids = array_merge( $allowed_ids, _getStudentAllowedTeachersRecipients( $student['STUDENT_ID'] ) );
 		}
 	}
 
@@ -600,7 +602,11 @@ function GetReplySubjectMessage( $msg_id )
 
 	$subject = $subject_message_RET[1]['SUBJECT'];
 
-	$subject = sprintf( dgettext( 'Messaging', 'Re: %s' ), $subject );
+	// Add "Re:" once!
+	if ( mb_strpos( $subject, sprintf( dgettext( 'Messaging', 'Re: %s' ), '' ) ) !== 0 )
+	{
+		$subject = sprintf( dgettext( 'Messaging', 'Re: %s' ), $subject );
+	}
 
 	$data = unserialize( $subject_message_RET[1]['DATA'] );
 
@@ -633,7 +639,9 @@ function GetRecipientsInfo( $user_profile, $recipients_profile = 'teacher' )
 	{
 		if ( $recipients_profile === 'teacher' )
 		{
-			$allowed_ids = _getStudentAllowedTeachersRecipients();
+			$user = GetCurrentMessagingUser();
+
+			$allowed_ids = _getStudentAllowedTeachersRecipients( $user['user_id'] );
 		}
 		else
 		{
