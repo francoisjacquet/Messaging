@@ -9,6 +9,8 @@ License GNU GPL v2
 
 Author François Jacquet
 
+Sponsored by Whitesystem Colombia
+
 DESCRIPTION
 -----------
 This module provides an internal messaging system for direct communication between administrators, teachers, parents and students.
