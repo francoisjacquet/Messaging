@@ -19,7 +19,7 @@ function GetCurrentMessagingUser()
 		if ( $key === 'student_id' )
 		{
 			$name_RET = DBGet( DBQuery(
-				"SELECT FIRST_NAME||' '||LAST_NAME||coalesce(' '||NAME_SUFFIX,'') AS NAME
+				"SELECT FIRST_NAME||' '||LAST_NAME||coalesce(' '||NAME_SUFFIX,' ') AS NAME
 				FROM STUDENTS
 				WHERE STUDENT_ID='" . $user_id . "'" ) );
 		}
