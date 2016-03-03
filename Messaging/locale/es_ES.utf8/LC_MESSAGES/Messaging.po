@@ -2,156 +2,225 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Messaging module for RosarioSIS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-11-10 15:47-0500\n"
-"PO-Revision-Date: 2014-11-10 15:47-0500\n"
+"POT-Creation-Date: 2016-03-03 14:26-0500\n"
+"PO-Revision-Date: 2016-03-03 14:28-0500\n"
 "Last-Translator: François Jacquet <info@rosariosis.org>\n"
 "Language-Team: RosarioSIS <info@rosariosis.org>\n"
-"Language: \n"
+"Language: es_ES\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-KeywordsList: dgettext:2\n"
 "X-Poedit-Basepath: /var/www/github/rosariosis/modules/Messaging/\n"
-"X-Poedit-Language: Spanish\n"
-"X-Poedit-Country: SPAIN\n"
+"X-Generator: Poedit 1.7.6\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: MessagingResource.php:60
-#: Resources.php:73
-msgid "Title"
+#: Menu.php:14
+msgid "Messaging"
+msgstr "Mensajeria"
+
+#: Menu.php:19 Menu.php:25
+msgid "Messages"
+msgstr "Mensajes"
+
+#: Menu.php:20 Menu.php:26
+msgid "Write"
+msgstr "Escribir"
+
+#: Messages.php:31
+msgid "Message archived."
+msgstr "Mensaje archivado."
+
+#: Write.php:27
+msgid "Message sent."
+msgstr "Mensaje enviado."
+
+#: Write.php:31
+msgid "The message could not be sent."
+msgstr "El mensaje no ha sido enviado."
+
+#: Write.php:74
+msgid "You are not allowed to send messages."
+msgstr "No está autorizado para enviar mensajes."
+
+#: Write.php:101
+msgid "Users"
 msgstr ""
 
-#: MessagingResource.php:60
-msgid "# of Students"
-msgstr "# de Estudiantes"
-
-#: MessagingResource.php:60
-msgid "# of Administrators"
-msgstr "# de Administradores"
-
-#: MessagingResource.php:60
-msgid "# of Teachers"
-msgstr "# de Docentes"
-
-#: MessagingResource.php:60
-msgid "# of Parents"
-msgstr "# de Padres"
-
-#: MessagingWidget.php:52
-msgid "Teacher"
+#: Write.php:101
+msgid "Parents"
 msgstr ""
 
-#: MessagingWidget.php:53
-msgid "Marking Period"
+#: Write.php:103 includes/Write.fnc.php:219
+msgid "Students"
 msgstr ""
 
-#: MessagingWidget.php:54
-msgid "Principal"
+#: Write.php:108 includes/Write.fnc.php:220
+msgid "Staff"
 msgstr ""
 
-#: MessagingWidget.php:55
+#: Write.php:140
+msgid "Find a Parent"
+msgstr "Encontrar un Padre"
+
+#: Write.php:192 Write.php:313
+msgid "Send"
+msgstr "Enviar"
+
+#: Write.php:198 includes/Messages.fnc.php:67 includes/Messages.fnc.php:73
+#: includes/Messages.fnc.php:80 includes/Messages.fnc.php:226
+msgid "Subject"
+msgstr "Asunto"
+
+#: Write.php:213
+msgid "Message"
+msgstr "Mensaje"
+
+#: Write.php:255
+msgid "Hold the CTRL key down to select multiple options"
+msgstr ""
+
+#: Write.php:282
+msgid "Teachers"
+msgstr ""
+
+#: Write.php:288
+msgid "Administrators"
+msgstr ""
+
+#: includes/Messages.fnc.php:68
+msgid "Recipients"
+msgstr "Recipientes"
+
+#: includes/Messages.fnc.php:69 includes/Messages.fnc.php:75
+#: includes/Messages.fnc.php:82 includes/Messages.fnc.php:141
 msgid "Date"
 msgstr ""
 
-#: MessagingWidget.php:65
-msgid "You must choose at least one student."
+#: includes/Messages.fnc.php:74 includes/Messages.fnc.php:81
+#: includes/Messages.fnc.php:156
+msgid "From"
+msgstr "De"
+
+#: includes/Messages.fnc.php:87
+msgid "Unread"
+msgstr "No leído"
+
+#: includes/Messages.fnc.php:88
+msgid "Unread message"
+msgstr "Mensaje no leído"
+
+#: includes/Messages.fnc.php:89
+msgid "Unread messages"
+msgstr "Mensajes no leídos"
+
+#: includes/Messages.fnc.php:94
+msgid "Read"
+msgstr "Leído"
+
+#: includes/Messages.fnc.php:95
+msgid "Read message"
+msgstr "Mensaje leído"
+
+#: includes/Messages.fnc.php:96
+msgid "Read messages"
+msgstr "Mensajes leídos"
+
+#: includes/Messages.fnc.php:101
+msgid "Archived"
+msgstr "Archivado"
+
+#: includes/Messages.fnc.php:102
+msgid "Archived message"
+msgstr "Mensaje archivado"
+
+#: includes/Messages.fnc.php:103
+msgid "Archived messages"
+msgstr "Mensajes archivados"
+
+#: includes/Messages.fnc.php:108
+msgid "Sent"
+msgstr "Enviado"
+
+#: includes/Messages.fnc.php:109
+msgid "Sent message"
+msgstr "Mensaje enviado"
+
+#: includes/Messages.fnc.php:110
+msgid "Sent messages"
+msgstr "Mensajes envidaos"
+
+#: includes/Messages.fnc.php:129 includes/Messages.fnc.php:307
+msgid "Archive"
+msgstr "Archivar"
+
+#: includes/Messages.fnc.php:189
+msgid "To"
+msgstr "Para"
+
+#: includes/Messages.fnc.php:313
+msgid "Reply"
+msgstr "Responder"
+
+#: includes/Messages.fnc.php:319
+#, php-format
+msgid "Back to %s"
+msgstr "Volver a %s"
+
+#: includes/Messages.fnc.php:420
+#, php-format
+msgid "%s Read"
+msgstr "%s Leído"
+
+#: includes/Write.fnc.php:32
+msgid "The message could not be sent. Form elements are missing."
+msgstr "El mensaje no ha sido enviado. Elementos del formulario están faltando."
+
+#: includes/Write.fnc.php:41
+msgid "Please fill in the required fields"
 msgstr ""
 
-#: MessagingWidget.php:78
-#: MessagingWidget.php:115
-msgid "Create Subject PDF for Selected Students"
-msgstr "Crear el PDF Materia para los Estudiantes Seleccionados"
+#: includes/Write.fnc.php:58
+msgid "You are not allowed to send a message to those recipients."
+msgstr "No tiene permiso para enviar un mensaje a estos recipientes."
 
-#: MessagingWidget.php:81
-msgid "Text"
-msgstr ""
+#: includes/Write.fnc.php:606 includes/Write.fnc.php:608
+#, php-format
+msgid "Re: %s"
+msgstr "Re: %s"
 
-#: MessagingWidget.php:85
-msgid "Substitutions"
-msgstr ""
+#~ msgid "# of Students"
+#~ msgstr "# de Estudiantes"
 
-#: MessagingWidget.php:86
-msgid "Last, First M"
-msgstr ""
+#~ msgid "# of Administrators"
+#~ msgstr "# de Administradores"
 
-#: MessagingWidget.php:87
-msgid "Last Name"
-msgstr ""
+#~ msgid "# of Teachers"
+#~ msgstr "# de Docentes"
 
-#: MessagingWidget.php:89
-msgid "First Name"
-msgstr ""
+#~ msgid "# of Parents"
+#~ msgstr "# de Padres"
 
-#: MessagingWidget.php:90
-msgid "Middle Name"
-msgstr ""
+#~ msgid "Create Subject PDF for Selected Students"
+#~ msgstr "Crear el PDF Materia para los Estudiantes Seleccionados"
 
-#: MessagingWidget.php:92
-msgid "School"
-msgstr ""
+#~ msgid "Messaging Widget"
+#~ msgstr "Widget de Ejemplo"
 
-#: MessagingWidget.php:93
-msgid "Grade Level"
-msgstr ""
+#~ msgid "Setup"
+#~ msgstr "Configuración"
 
-#: MessagingWidget.php:145
-#: MessagingWidget.php:163
-msgid "Subject"
-msgstr ""
+#~ msgid "Messaging Resource"
+#~ msgstr "Recurso de Ejemplo"
 
-#: Menu.php:13
-#: Menu.php:32
-#: Setup.php:62
-msgid "Messaging"
-msgstr "Ejemplo"
+#~ msgid "The configuration value has been modified."
+#~ msgstr "El valor de configuración ha sido modificado."
 
-#: Menu.php:18
-#: Menu.php:25
-msgid "Messaging Widget"
-msgstr "Widget de Ejemplo"
+#~ msgid "Messaging module Setup"
+#~ msgstr "Configuración del Módulo Ejemplo"
 
-#: Menu.php:19
-#: Menu.php:20
-msgid "Setup"
-msgstr "Configuración"
+#~ msgid "Try to enter a non-numeric value"
+#~ msgstr "Intente entrar un valor no numerico"
 
-#: Menu.php:33
-msgid "Messaging Resource"
-msgstr "Recurso de Ejemplo"
-
-#: Resources.php:57
-msgid "Resource"
-msgstr ""
-
-#: Resources.php:73
-#: Resources.php:116
-msgid "Link"
-msgstr ""
-
-#: Resources.php:82
-#: Resources.php:85
-#: Setup.php:51
-#: Setup.php:69
-msgid "Save"
-msgstr ""
-
-#: Setup.php:26
-msgid "The configuration value has been modified."
-msgstr "El valor de configuración ha sido modificado."
-
-#: Setup.php:30
-msgid "Please enter valid Numeric data."
-msgstr ""
-
-#: Setup.php:56
-msgid "Messaging module Setup"
-msgstr "Configuración del Módulo Ejemplo"
-
-#: Setup.php:63
-msgid "Try to enter a non-numeric value"
-msgstr "Intente entrar un valor no numerico"
-
-#: Setup.php:63
-msgid "Messaging config value label"
-msgstr "Ejemplo de nombre del valor de config"
-
+#~ msgid "Messaging config value label"
+#~ msgstr "Ejemplo de nombre del valor de config"
