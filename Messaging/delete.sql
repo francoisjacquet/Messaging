@@ -31,24 +31,24 @@ DELETE FROM profile_exceptions WHERE modname='Messaging/Write.php';
 --
 -- Name: messagexuser; Type: TABLE; Schema: public; Owner: rosariosis; Tablespace: 
 --
-DROP INDEX messagexuser_ind;
+DROP INDEX IF EXISTS messagexuser_ind;
 
-DROP TABLE messagexuser;
+DROP TABLE IF EXISTS messagexuser;
 
 
 /**
  * Messages table
  */
-DROP INDEX messages_ind;
+DROP INDEX IF EXISTS messages_ind;
 
-ALTER TABLE ONLY messages DROP CONSTRAINT messages_pkey;
+ALTER TABLE ONLY messages DROP CONSTRAINT IF EXISTS messages_pkey;
 
-DROP SEQUENCE messages_seq;
+DROP SEQUENCE IF EXISTS messages_seq;
 
 
 --
 -- Name: messages; Type: TABLE; Schema: public; Owner: rosariosis; Tablespace: 
 --
 
-DROP TABLE messages;
+DROP TABLE IF EXISTS messages;
 
