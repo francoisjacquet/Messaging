@@ -24,6 +24,11 @@ function MessagesListOutput( $view )
 
 	$columns_sql = 'm.' . implode( ', m.', array_keys( $view_data['columns'] ) );
 
+	if ( isset( $view_data['columns']['ARCHIVE'] ) )
+	{
+		$columns_sql = str_replace( 'm.ARCHIVE', "m.MESSAGE_ID AS ARCHIVE", $columns_sql );
+	}
+
 	$view_sql = "SELECT m.MESSAGE_ID, mxu.STATUS, " . $columns_sql . "
 		FROM MESSAGES m, MESSAGEXUSER mxu
 		WHERE m.SYEAR='" . UserSyear() . "'
@@ -36,6 +41,7 @@ function MessagesListOutput( $view )
 	$view_RET = DBGet(
 		DBQuery( $view_sql ),
 		array(
+			'ARCHIVE' => '_makeArchiveLink',
 			'DATETIME' => '_makeMessageDate',
 			'FROM' => '_makeMessageFrom',
 			'RECIPIENTS' => '_makeMessageRecipients',
@@ -69,6 +75,13 @@ function GetMessagesViewsData()
 			'DATETIME' => _( 'Date' ),
 		);
 
+		$columns_read = array(
+			'ARCHIVE' => '',
+			'SUBJECT' => _( 'Subject' ),
+			'FROM' => _( 'From' ),
+			'DATETIME' => _( 'Date' ),
+		);
+
 		$views_data = array(
 			'unread' => array(
 				'label' => dgettext( 'Messaging', 'Unread' ),
@@ -82,7 +95,7 @@ function GetMessagesViewsData()
 				'singular' => dgettext( 'Messaging', 'Read message' ),
 				'plural' => dgettext( 'Messaging', 'Read messages' ),
 				'link' =>  $link_base . '&amp;view=read',
-				'columns' => $columns,
+				'columns' => $columns_read,
 			),
 			'archived' => array(
 				'label' => dgettext( 'Messaging', 'Archived' ),
@@ -102,6 +115,18 @@ function GetMessagesViewsData()
 	}
 
 	return $views_data;
+}
+
+
+function _makeArchiveLink( $value, $column )
+{
+	$msg_id = $value;
+
+	$views = GetMessagesViewsData();
+
+	$archive_link = $views['read']['link'] . '&message_id=' . $msg_id . '&modfunc=archive';
+
+	return '<a href="' . $archive_link . '"><b>' . dgettext( 'Messaging', 'Archive' ) . '</b></a>';
 }
 
 
@@ -128,7 +153,7 @@ function _makeMessageFrom( $value, $column )
 
 function _makeMessageFromHeader( $value, $column )
 {
-	return _( 'From' ) . ': ' . _makeMessageFrom( $value, $column );
+	return dgettext( 'Messaging', 'From' ) . ': ' . _makeMessageFrom( $value, $column );
 }
 
 
@@ -263,14 +288,32 @@ function MessageOutput( $msg_id )
 
 	$back_to_link = $views_data[ $msg['STATUS'] ]['link'];
 
-	// Back to link & Reply link.
+	$header_right = array();
+
+	if ( $msg['STATUS'] === 'read'
+		|| $msg['STATUS'] === 'unread' )
+	{
+		$view_archive_message_link = PreparePHP_SELF(
+			array(),
+			array(),
+			array( 'view' => 'message', 'message_id' => $msg_id, 'modfunc' => 'archive' )
+		);
+
+		$header_right[] = '<a href="' . $view_archive_message_link . '">' .
+		dgettext( 'Messaging', 'Archive' ) . '</a>';
+	}
+
+	if ( $msg['STATUS'] !== 'sent' )
+	{
+		$header_right[] = '<a href="Modules.php?modname=Messaging/Write.php&reply_to_id=' . $msg_id . '">' .
+		dgettext( 'Messaging', 'Reply' ) . '</a>';
+	}
+
+	// Back to link & Reply link & Archive link.
 	DrawHeader(
 		'<a href="' . $back_to_link . '">' .
 			sprintf( dgettext( 'Messaging', 'Back to %s' ), $back_to_text ) . '</a>',
-		( $msg['STATUS'] !== 'sent' ?
-			'<a href="Modules.php?modname=Messaging/Write.php&reply_to_id=' . $msg_id . '">' .
-				dgettext( 'Messaging', 'Reply' ) . '</a>' :
-			'' )
+		implode( ' | ', $header_right )
 	);
 
 	DrawHeader( $msg['FROM'] );
@@ -374,4 +417,45 @@ function _getSentMessageReadPercent( $msg_id )
 	}
 
 	return $read_label;
+}
+
+
+function MessageArchive( $msg_id )
+{
+	// Check message ID.
+	if ( ! $msg_id
+		|| (string) (int) $msg_id !== $msg_id
+		|| $msg_id < 1 )
+	{
+		return false;
+	}
+	
+	$current_user = GetCurrentMessagingUser();
+
+	// Check message status (read) & message user.
+	$msg_check_sql = "SELECT 1 FROM MESSAGEXUSER mxu, MESSAGES m
+		WHERE mxu.MESSAGE_ID='" . $msg_id . "'
+		AND mxu.MESSAGE_ID=m.MESSAGE_ID
+		AND mxu.STATUS='read'
+		AND m.SCHOOL_ID='" . UserSchool() . "'
+		AND m.SYEAR='" . UserSyear() . "'
+		AND mxu.USER_ID='" . $current_user['user_id'] . "'
+		AND mxu.KEY='" . $current_user['key'] . "'";
+
+	$msg_check_RET = DBGet( DBQuery( $msg_check_sql ) );
+
+	if ( ! $msg_check_RET )
+	{
+		return false;
+	}
+
+	// Archive message.
+	$msg_archive_sql = "UPDATE MESSAGEXUSER SET STATUS='archived'
+		WHERE MESSAGE_ID='" . $msg_id . "'
+		AND USER_ID='" . $current_user['user_id'] . "'
+		AND KEY='" . $current_user['key'] . "'";
+
+	DBQuery( $msg_archive_sql );
+
+	return true;
 }
