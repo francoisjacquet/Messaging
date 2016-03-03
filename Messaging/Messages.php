@@ -11,8 +11,17 @@ require_once 'modules/Messaging/includes/Common.fnc.php';
 // Include Messages functions.
 require_once 'modules/Messaging/includes/Messages.fnc.php';
 
+$title = ProgramTitle();
 
-DrawHeader( ProgramTitle() );
+if ( SchoolInfo( 'SCHOOLS_NB' ) > 1
+	&& ( User( 'PROFILE' ) === 'admin'
+		|| User( 'PROFILE' ) === 'teacher' ) )
+{
+	// If more than 1 school, mention current school.
+	$title .= ' (' . SchoolInfo( 'TITLE' ) . ')';
+}
+
+DrawHeader( $title );
 
 if ( $_REQUEST['view'] === 'message' )
 {
