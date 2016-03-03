@@ -134,15 +134,8 @@ function _makeMessageFromHeader( $value, $column )
 
 function _makeMessageRecipients( $value, $column )
 {
-	$len = mb_strlen( $value );
-
-	if ( $len <= 40 )
-	{
-		return $value;
-	}
-
 	// Truncate value to 40 chars.
-	return mb_substr( $value, 0, 37 ) . '...';
+	return mb_strlen( $value ) <= 40 ? $value : mb_substr( $value, 0, 37 ) . '...';
 }
 
 
@@ -191,8 +184,11 @@ function _makeMessageSubject( $value, $column )
 		$extra = ' style="font-weight:bold;"';
 	}
 
+	// Truncate value to 40 chars.
+	$subject = mb_strlen( $value ) <= 40 ? $value : mb_substr( $value, 0, 37 ) . '...';
+
 	return '<a href="' . $view_message_link . '"' . $extra . '>' .
-		$value . '</a>';
+		$subject . '</a>';
 }
 
 
