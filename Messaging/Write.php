@@ -195,7 +195,7 @@ if ( $reply
 	DrawHeader( TextInput(
 		$subject,
 		'subject',
-		_( 'Subject' ),
+		dgettext( 'Messaging', 'Subject' ),
 		'required maxlength="100" class="width-100p"',
 		false
 	) );

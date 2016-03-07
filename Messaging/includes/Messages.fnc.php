@@ -64,20 +64,20 @@ function GetMessagesViewsData()
 		$link_base = PreparePHP_SELF( array(), array( 'view', 'message_id' ) );
 
 		$columns_sent = array(
-			'SUBJECT' => _( 'Subject' ),
+			'SUBJECT' => dgettext( 'Messaging', 'Subject' ),
 			'RECIPIENTS' => _( 'Recipients' ),
 			'DATETIME' => _( 'Date' ),
 		);
 
 		$columns = array(
-			'SUBJECT' => _( 'Subject' ),
+			'SUBJECT' => dgettext( 'Messaging', 'Subject' ),
 			'FROM' => _( 'From' ),
 			'DATETIME' => _( 'Date' ),
 		);
 
 		$columns_read = array(
 			'ARCHIVE' => '',
-			'SUBJECT' => _( 'Subject' ),
+			'SUBJECT' => dgettext( 'Messaging', 'Subject' ),
 			'FROM' => _( 'From' ),
 			'DATETIME' => _( 'Date' ),
 		);
@@ -132,6 +132,12 @@ function _makeArchiveLink( $value, $column )
 
 function _makeMessageDate( $value, $column )
 {
+	if ( function_exists( 'ProperDateTime' ) )
+	{
+		// Since 2.9.
+		return ProperDateTime( $value, 'short' );
+	}
+
 	return ProperDate( mb_substr( $value, 0, 10 ) ) . mb_substr( $value, 10 );
 }
 
@@ -223,7 +229,7 @@ function _makeMessageSubject( $value, $column )
 
 function _makeMessageSubjectHeader( $value, $column )
 {
-	return _( 'Subject' ) . ': <b>' . $value . '</b>';
+	return dgettext( 'Messaging', 'Subject' ) . ': <b>' . $value . '</b>';
 }
 
 
