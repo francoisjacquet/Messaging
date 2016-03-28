@@ -29,7 +29,7 @@ DELETE FROM profile_exceptions WHERE modname='Messaging/Write.php';
  * User cross message table
  */
 --
--- Name: messagexuser; Type: TABLE; Schema: public; Owner: rosariosis; Tablespace: 
+-- Name: messagexuser; Type: TABLE; Schema: public; Owner: rosariosis; Tablespace:
 --
 DROP INDEX IF EXISTS messagexuser_ind;
 
@@ -41,13 +41,18 @@ DROP TABLE IF EXISTS messagexuser;
  */
 DROP INDEX IF EXISTS messages_ind;
 
-ALTER TABLE ONLY messages DROP CONSTRAINT IF EXISTS messages_pkey;
+DO $$DECLARE r record;
+BEGIN
+    IF EXISTS (SELECT 1 FROM pg_tables WHERE tablename='messages') THEN
+        EXECUTE 'ALTER TABLE ONLY messages DROP CONSTRAINT IF EXISTS messages_pkey';
+    END IF;
+END$$;
 
 DROP SEQUENCE IF EXISTS messages_seq;
 
 
 --
--- Name: messages; Type: TABLE; Schema: public; Owner: rosariosis; Tablespace: 
+-- Name: messages; Type: TABLE; Schema: public; Owner: rosariosis; Tablespace:
 --
 
 DROP TABLE IF EXISTS messages;
