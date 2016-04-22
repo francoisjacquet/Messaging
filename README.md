@@ -1,6 +1,8 @@
 Messaging Module
 ================
 
+![screenshot](https://raw.githubusercontent.com/francoisjacquet/rosariosis-module-messaging/master/Messaging/screenshot.png)
+
 http://github.com/francoisjacquet/rosariosis-module-messaging
 
 Version 1.0 - March, 2016
