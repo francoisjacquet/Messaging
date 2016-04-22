@@ -11,7 +11,7 @@
 
 /**
  * profile_exceptions Table
- * 
+ *
  * profile_id:
  * - 0: student
  * - 1: admin
@@ -22,7 +22,7 @@
  * can_edit: 'Y' or null (generally null for non admins)
  */
 --
--- Data for Name: profile_exceptions; Type: TABLE DATA; 
+-- Data for Name: profile_exceptions; Type: TABLE DATA;
 --
 
 INSERT INTO profile_exceptions (profile_id, modname, can_use, can_edit) VALUES (
@@ -52,7 +52,7 @@ INSERT INTO profile_exceptions (profile_id, modname, can_use, can_edit) VALUES (
  * User cross message table
  */
 --
--- Name: messagexuser; Type: TABLE; Schema: public; Owner: rosariosis; Tablespace: 
+-- Name: messagexuser; Type: TABLE; Schema: public; Owner: rosariosis; Tablespace:
 --
 
 CREATE TABLE messagexuser (
@@ -65,7 +65,7 @@ CREATE TABLE messagexuser (
 
 
 --
--- Name: messagexuser_ind; Type: INDEX; Schema: public; Owner: rosariosis; Tablespace: 
+-- Name: messagexuser_ind; Type: INDEX; Schema: public; Owner: rosariosis; Tablespace:
 --
 
 CREATE INDEX messagexuser_ind ON messagexuser USING btree (user_id, key, status);
@@ -76,7 +76,7 @@ CREATE INDEX messagexuser_ind ON messagexuser USING btree (user_id, key, status)
  * Messages table
  */
 --
--- Name: messages; Type: TABLE; Schema: public; Owner: rosariosis; Tablespace: 
+-- Name: messages; Type: TABLE; Schema: public; Owner: rosariosis; Tablespace:
 --
 
 CREATE TABLE messages (
@@ -112,7 +112,7 @@ SELECT pg_catalog.setval('messages_seq', 1, false);
 
 
 --
--- Name: messages_pkey; Type: CONSTRAINT; Schema: public; Owner: rosariosis; Tablespace: 
+-- Name: messages_pkey; Type: CONSTRAINT; Schema: public; Owner: rosariosis; Tablespace:
 --
 
 ALTER TABLE ONLY messages
@@ -121,7 +121,7 @@ ALTER TABLE ONLY messages
 
 
 --
--- Name: messages_ind; Type: INDEX; Schema: public; Owner: rosariosis; Tablespace: 
+-- Name: messages_ind; Type: INDEX; Schema: public; Owner: rosariosis; Tablespace:
 --
 
 CREATE INDEX messages_ind ON messages USING btree (syear, school_id);
