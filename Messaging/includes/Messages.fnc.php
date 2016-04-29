@@ -192,7 +192,7 @@ function _makeMessageRecipientsHeader( $value, $column )
 	}
 
 	// TODO: give option to view ALL recipients.
-	return _( 'To' ) . ': ' . $recipients_trucated;
+	return dgettext(  'Messaging', 'To' ) . ': ' . $recipients_trucated;
 }
 
 
@@ -439,7 +439,7 @@ function MessageArchive( $msg_id )
 	{
 		return false;
 	}
-	
+
 	$current_user = GetCurrentMessagingUser();
 
 	// Check message status (read) & message user.

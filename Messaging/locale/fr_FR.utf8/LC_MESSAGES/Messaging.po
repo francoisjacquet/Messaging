@@ -1,0 +1,234 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Messaging module for RosarioSIS\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-04-29 09:41-0500\n"
+"PO-Revision-Date: 2016-04-29 09:41-0500\n"
+"Last-Translator: François Jacquet <info@rosariosis.org>\n"
+"Language-Team: RosarioSIS <info@rosariosis.org>\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-KeywordsList: dgettext:2\n"
+"X-Poedit-Basepath: /var/www/github/rosariosis-module-messaging/Messaging/\n"
+"X-Generator: Poedit 1.7.6\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: Menu.php:14
+msgid "Messaging"
+msgstr "Messagerie"
+
+#: Menu.php:19 Menu.php:25
+msgid "Messages"
+msgstr "Messages"
+
+#: Menu.php:20 Menu.php:26
+msgid "Write"
+msgstr "Écrire"
+
+#: Messages.php:31
+msgid "Message archived."
+msgstr "Message archivé."
+
+#: Write.php:27
+msgid "Message sent."
+msgstr "Message envoyé."
+
+#: Write.php:31
+msgid "The message could not be sent."
+msgstr "Le message n'a pas pu être envoyé."
+
+#: Write.php:74
+msgid "You are not allowed to send messages."
+msgstr "Vous n'êtes pas authorisé à envoyer des messages."
+
+#: Write.php:101
+msgid "Users"
+msgstr ""
+
+#: Write.php:101
+msgid "Parents"
+msgstr ""
+
+#: Write.php:103 includes/Write.fnc.php:219
+msgid "Students"
+msgstr ""
+
+#: Write.php:108 includes/Write.fnc.php:220
+msgid "Staff"
+msgstr ""
+
+#: Write.php:140
+msgid "Find a Parent"
+msgstr "Trouver un Parent"
+
+#: Write.php:192 Write.php:313
+msgid "Send"
+msgstr "Envoyer"
+
+#: Write.php:198 includes/Messages.fnc.php:67 includes/Messages.fnc.php:73
+#: includes/Messages.fnc.php:80 includes/Messages.fnc.php:232
+msgid "Subject"
+msgstr "Sujet"
+
+#: Write.php:213
+msgid "Message"
+msgstr "Message"
+
+#: Write.php:255
+msgid "Hold the CTRL key down to select multiple options"
+msgstr ""
+
+#: Write.php:282
+msgid "Teachers"
+msgstr ""
+
+#: Write.php:288
+msgid "Administrators"
+msgstr ""
+
+#: functions.php:47
+#, php-format
+msgid "%d new message"
+msgid_plural "%d new messages"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/Messages.fnc.php:68
+msgid "Recipients"
+msgstr "Destinataires"
+
+#: includes/Messages.fnc.php:69 includes/Messages.fnc.php:75
+#: includes/Messages.fnc.php:82 includes/Messages.fnc.php:147
+msgid "Date"
+msgstr ""
+
+#: includes/Messages.fnc.php:74 includes/Messages.fnc.php:81
+#: includes/Messages.fnc.php:162
+msgid "From"
+msgstr "De"
+
+#: includes/Messages.fnc.php:87
+msgid "Unread"
+msgstr "Non lu"
+
+#: includes/Messages.fnc.php:88
+msgid "Unread message"
+msgstr "Message non lu"
+
+#: includes/Messages.fnc.php:89
+msgid "Unread messages"
+msgstr "Messages non lus"
+
+#: includes/Messages.fnc.php:94
+msgid "Read"
+msgstr "Lu"
+
+#: includes/Messages.fnc.php:95
+msgid "Read message"
+msgstr "Message lu"
+
+#: includes/Messages.fnc.php:96
+msgid "Read messages"
+msgstr "Messages lus"
+
+#: includes/Messages.fnc.php:101
+msgid "Archived"
+msgstr "Archivé"
+
+#: includes/Messages.fnc.php:102
+msgid "Archived message"
+msgstr "Message archivé"
+
+#: includes/Messages.fnc.php:103
+msgid "Archived messages"
+msgstr "Messages archivés"
+
+#: includes/Messages.fnc.php:108
+msgid "Sent"
+msgstr "Envoyé"
+
+#: includes/Messages.fnc.php:109
+msgid "Sent message"
+msgstr "Message envoyé"
+
+#: includes/Messages.fnc.php:110
+msgid "Sent messages"
+msgstr "Messages envoyés"
+
+#: includes/Messages.fnc.php:129 includes/Messages.fnc.php:313
+msgid "Archive"
+msgstr "Archiver"
+
+#: includes/Messages.fnc.php:195
+msgid "To"
+msgstr "Pour"
+
+#: includes/Messages.fnc.php:319
+msgid "Reply"
+msgstr "Répondre"
+
+#: includes/Messages.fnc.php:325
+#, php-format
+msgid "Back to %s"
+msgstr "Retour au %s"
+
+#: includes/Messages.fnc.php:426
+#, php-format
+msgid "%s Read"
+msgstr "%s Lu"
+
+#: includes/Write.fnc.php:32
+msgid "The message could not be sent. Form elements are missing."
+msgstr "Le message n'a pas été envoyé. Des éléments du formulaire font défaut."
+
+#: includes/Write.fnc.php:41
+msgid "Please fill in the required fields"
+msgstr ""
+
+#: includes/Write.fnc.php:58
+msgid "You are not allowed to send a message to those recipients."
+msgstr "Vous n'êtes pas autorisé à envoyer un message à ces destinataires."
+
+#: includes/Write.fnc.php:606 includes/Write.fnc.php:608
+#, php-format
+msgid "Re: %s"
+msgstr "Re: %s"
+
+#~ msgid "# of Students"
+#~ msgstr "# de Estudiantes"
+
+#~ msgid "# of Administrators"
+#~ msgstr "# de Administradores"
+
+#~ msgid "# of Teachers"
+#~ msgstr "# de Docentes"
+
+#~ msgid "# of Parents"
+#~ msgstr "# de Padres"
+
+#~ msgid "Create Subject PDF for Selected Students"
+#~ msgstr "Crear el PDF Materia para los Estudiantes Seleccionados"
+
+#~ msgid "Messaging Widget"
+#~ msgstr "Widget de Ejemplo"
+
+#~ msgid "Setup"
+#~ msgstr "Configuración"
+
+#~ msgid "Messaging Resource"
+#~ msgstr "Recurso de Ejemplo"
+
+#~ msgid "The configuration value has been modified."
+#~ msgstr "El valor de configuración ha sido modificado."
+
+#~ msgid "Messaging module Setup"
+#~ msgstr "Configuración del Módulo Ejemplo"
+
+#~ msgid "Try to enter a non-numeric value"
+#~ msgstr "Intente entrar un valor no numerico"
+
+#~ msgid "Messaging config value label"
+#~ msgstr "Ejemplo de nombre del valor de config"
