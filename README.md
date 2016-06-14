@@ -1,9 +1,9 @@
 Messaging Module
 ================
 
-![screenshot](https://raw.githubusercontent.com/francoisjacquet/rosariosis-module-messaging/master/Messaging/screenshot.png)
+![screenshot](https://raw.githubusercontent.com/francoisjacquet/Messaging/master/screenshot.png)
 
-http://github.com/francoisjacquet/rosariosis-module-messaging
+http://github.com/francoisjacquet/Messaging
 
 Version 1.0 - March, 2016
 
@@ -25,8 +25,8 @@ Messaging
 
 INSTALL
 -------
-Copy the Messaging/ folder and its content inside the modules/ folder of RosarioSIS.
+Copy the `Messaging/` folder (if named `Messaging-master`, rename it) and its content inside the `modules/` folder of RosarioSIS.
 
-Go to School Setup > School Configuration > Modules and click "Activate".
+Go to _School Setup > School Configuration > Modules_ and click "Activate".
 
 Requires RosarioSIS 2.8.26+
