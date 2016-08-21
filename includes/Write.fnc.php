@@ -368,7 +368,7 @@ function GetAllowedRecipientsKeys( $profile )
 	}
 
 	//return array( 'student_id', 'staff_id', 'course_period_id', 'grade_id', 'profile_id' );
-	
+
 	return array();
 }
 
@@ -487,12 +487,12 @@ function _getParentAllowedTeachersRecipients()
 	{
 		// Get Parent Students for current school.
 		$students_RET = DBGet( DBQuery( "SELECT sju.STUDENT_ID
-			FROM STUDENTS s,STUDENTS_JOIN_USERS sju,STUDENT_ENROLLMENT se 
-			WHERE s.STUDENT_ID=sju.STUDENT_ID 
-			AND sju.STAFF_ID='" . User( 'STAFF_ID' ) . "' 
+			FROM STUDENTS s,STUDENTS_JOIN_USERS sju,STUDENT_ENROLLMENT se
+			WHERE s.STUDENT_ID=sju.STUDENT_ID
+			AND sju.STAFF_ID='" . User( 'STAFF_ID' ) . "'
 			AND se.SYEAR='" . UserSyear() . "'
 			AND se.SCHOOL_ID ='" . UserSchool() . "'
-			AND se.STUDENT_ID=sju.STUDENT_ID 
+			AND se.STUDENT_ID=sju.STUDENT_ID
 			AND ('" . DBDate() . "'>=se.START_DATE
 				AND ('" . DBDate() . "'<=se.END_DATE
 					OR se.END_DATE IS NULL ) )" ) );
@@ -520,7 +520,7 @@ function _getTeacherAllowedParentsRecipients()
 	if ( ! $allowed_ids )
 	{
 		$allowed_ids_RET = DBGet( DBQuery( "SELECT array_agg(sju.STAFF_ID) as ALLOWED_IDS
-			FROM STUDENTS_JOIN_USERS sju,STUDENT_ENROLLMENT sem,SCHEDULE sch 
+			FROM STUDENTS_JOIN_USERS sju,STUDENT_ENROLLMENT sem,SCHEDULE sch
 			WHERE sem.STUDENT_ID=sju.STUDENT_ID
 			AND sem.SYEAR='" . UserSyear() . "'
 			AND sem.SCHOOL_ID='" . UserSchool() . "'
@@ -612,7 +612,7 @@ function GetReplySubjectMessage( $msg_id )
 
 	$message = $data['message'];
 
-	return array( 'subject' => $subject, 'message' => $message ); 
+	return array( 'subject' => $subject, 'message' => $message );
 }
 
 

@@ -423,7 +423,7 @@ function _getSentMessageReadPercent( $msg_id )
 	}
 	else
 	{
-		$read_label = strpintf( dgettext( 'Messaging', '%s Read' ), $read_percent . '%' );
+		$read_label = sprintf( dgettext( 'Messaging', '%s Read' ), $read_percent . '%' );
 	}
 
 	return $read_label;
