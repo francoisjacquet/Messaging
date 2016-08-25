@@ -252,7 +252,7 @@ if ( $reply
 		$value = $allow_na = $div = false;
 
 		// Multiple select input.
-		$extra = 'multiple title="' . _( 'Hold the CTRL key down to select multiple options' ) . '"';
+		$extra = 'multiple';
 
 		$add_label = '';
 
@@ -266,15 +266,15 @@ if ( $reply
 		elseif ( User( 'PROFILE' ) === 'parent' )
 		{
 			$student_name_RET = DBGet( DBQuery( "SELECT s.LAST_NAME||', '||s.FIRST_NAME AS NAME
-					FROM STUDENTS s,STUDENT_ENROLLMENT se 
+					FROM STUDENTS s,STUDENT_ENROLLMENT se
 					WHERE se.STUDENT_ID='" . UserStudentID() . "'
-					AND s.STUDENT_ID=se.STUDENT_ID 
+					AND s.STUDENT_ID=se.STUDENT_ID
 					AND se.SYEAR='" . UserSyear() . "'" );
 
 			// If more than one student.
 			$add_label = ' (' . ')';
 		}*/
-		
+
 		// Display Teachers select.
 		$teachers_options = GetRecipientsInfo( User( 'PROFILE' ), 'teacher' );
 
@@ -287,25 +287,38 @@ if ( $reply
 
 		$admins_label = _( 'Administrators' ) . $add_label;
 
-		DrawHeader( SelectInput(
-				$value,
-				'recipients_ids[]',
-				$teachers_label,
-				$teachers_options,
-				$allow_na,
-				$extra,
-				$div
-			),
-			SelectInput(
-				$value,
-				'recipients_ids[]',
-				$admins_label,
-				$admins_options,
-				$allow_na,
-				$extra,
-				$div
-			)
+		if ( function_exists( 'ChosenSelectInput' ) ) // @since 2.9.5.
+		{
+			$select_input_function = 'ChosenSelectInput';
+		}
+		else // Regular SelectInput().
+		{
+			$select_input_function = 'SelectInput';
+
+			$extra .= ' title="' . _( 'Hold the CTRL key down to select multiple options' ) . '"';
+		}
+
+		$teachers_select = $select_input_function(
+			$value,
+			'recipients_ids[]',
+			$teachers_label,
+			$teachers_options,
+			$allow_na,
+			$extra,
+			$div
 		);
+
+		$admins_select = $select_input_function(
+			$value,
+			'recipients_ids[]',
+			$admins_label,
+			$admins_options,
+			$allow_na,
+			$extra,
+			$div
+		);
+
+		DrawHeader(	$teachers_select, $admins_select );
 	}
 
 	// Send button.
