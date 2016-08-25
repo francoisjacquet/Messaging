@@ -392,7 +392,7 @@ function _getAllowedAdminsRecipients()
 		}
 	}
 
-	return $allowed_ids;
+	return (array) $allowed_ids;
 }
 
 
@@ -415,7 +415,7 @@ function _getAllowedTeachersRecipients()
 		}
 	}
 
-	return $allowed_ids;
+	return (array) $allowed_ids;
 }
 
 
@@ -470,7 +470,7 @@ function _getStudentAllowedTeachersRecipients( $student_id )
 		}
 	}
 
-	return $allowed_ids[ $student_id ];
+	return (array) $allowed_ids[ $student_id ];
 }
 
 
@@ -504,7 +504,7 @@ function _getParentAllowedTeachersRecipients()
 		}
 	}
 
-	return $allowed_ids;
+	return (array) $allowed_ids;
 }
 
 
@@ -536,7 +536,7 @@ function _getTeacherAllowedParentsRecipients()
 		}
 	}
 
-	return $allowed_ids;
+	return (array) $allowed_ids;
 }
 
 
