@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Messaging module for RosarioSIS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-04-29 09:41-0500\n"
-"PO-Revision-Date: 2016-04-29 09:41-0500\n"
+"POT-Creation-Date: 2016-09-13 12:54-0500\n"
+"PO-Revision-Date: 2016-09-13 12:54-0500\n"
 "Last-Translator: François Jacquet <info@rosariosis.org>\n"
 "Language-Team: RosarioSIS <info@rosariosis.org>\n"
 "Language: fr\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-KeywordsList: dgettext:2\n"
-"X-Poedit-Basepath: /var/www/github/rosariosis-module-messaging/Messaging/\n"
+"X-Poedit-Basepath: /var/www/github/rosariosis-module-messaging/\n"
 "X-Generator: Poedit 1.7.6\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Poedit-SearchPath-0: .\n"
@@ -64,7 +64,7 @@ msgstr ""
 msgid "Find a Parent"
 msgstr "Trouver un Parent"
 
-#: Write.php:192 Write.php:313
+#: Write.php:192 Write.php:326
 msgid "Send"
 msgstr "Envoyer"
 
@@ -77,10 +77,6 @@ msgstr "Sujet"
 msgid "Message"
 msgstr "Message"
 
-#: Write.php:255
-msgid "Hold the CTRL key down to select multiple options"
-msgstr ""
-
 #: Write.php:282
 msgid "Teachers"
 msgstr ""
@@ -89,12 +85,16 @@ msgstr ""
 msgid "Administrators"
 msgstr ""
 
+#: Write.php:298
+msgid "Hold the CTRL key down to select multiple options"
+msgstr ""
+
 #: functions.php:47
 #, php-format
 msgid "%d new message"
 msgid_plural "%d new messages"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d nouveau message"
+msgstr[1] "%d nouveaux messages"
 
 #: includes/Messages.fnc.php:68
 msgid "Recipients"

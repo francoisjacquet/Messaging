@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Messaging module for RosarioSIS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-03-03 14:26-0500\n"
-"PO-Revision-Date: 2016-03-03 14:28-0500\n"
+"POT-Creation-Date: 2016-09-13 12:55-0500\n"
+"PO-Revision-Date: 2016-09-13 12:55-0500\n"
 "Last-Translator: François Jacquet <info@rosariosis.org>\n"
 "Language-Team: RosarioSIS <info@rosariosis.org>\n"
 "Language: es_ES\n"
@@ -11,8 +11,9 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-KeywordsList: dgettext:2\n"
-"X-Poedit-Basepath: /var/www/github/rosariosis/modules/Messaging/\n"
+"X-Poedit-Basepath: /var/www/github/rosariosis-module-messaging/\n"
 "X-Generator: Poedit 1.7.6\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SearchPath-0: .\n"
 
 #: Menu.php:14
@@ -63,22 +64,18 @@ msgstr ""
 msgid "Find a Parent"
 msgstr "Encontrar un Padre"
 
-#: Write.php:192 Write.php:313
+#: Write.php:192 Write.php:326
 msgid "Send"
 msgstr "Enviar"
 
 #: Write.php:198 includes/Messages.fnc.php:67 includes/Messages.fnc.php:73
-#: includes/Messages.fnc.php:80 includes/Messages.fnc.php:226
+#: includes/Messages.fnc.php:80 includes/Messages.fnc.php:232
 msgid "Subject"
 msgstr "Asunto"
 
 #: Write.php:213
 msgid "Message"
 msgstr "Mensaje"
-
-#: Write.php:255
-msgid "Hold the CTRL key down to select multiple options"
-msgstr ""
 
 #: Write.php:282
 msgid "Teachers"
@@ -88,17 +85,28 @@ msgstr ""
 msgid "Administrators"
 msgstr ""
 
+#: Write.php:298
+msgid "Hold the CTRL key down to select multiple options"
+msgstr ""
+
+#: functions.php:47
+#, php-format
+msgid "%d new message"
+msgid_plural "%d new messages"
+msgstr[0] "%d nuevo mensaje"
+msgstr[1] "%d nuevos mensajes"
+
 #: includes/Messages.fnc.php:68
 msgid "Recipients"
 msgstr "Recipientes"
 
 #: includes/Messages.fnc.php:69 includes/Messages.fnc.php:75
-#: includes/Messages.fnc.php:82 includes/Messages.fnc.php:141
+#: includes/Messages.fnc.php:82 includes/Messages.fnc.php:147
 msgid "Date"
 msgstr ""
 
 #: includes/Messages.fnc.php:74 includes/Messages.fnc.php:81
-#: includes/Messages.fnc.php:156
+#: includes/Messages.fnc.php:162
 msgid "From"
 msgstr "De"
 
@@ -150,24 +158,24 @@ msgstr "Mensaje enviado"
 msgid "Sent messages"
 msgstr "Mensajes envidaos"
 
-#: includes/Messages.fnc.php:129 includes/Messages.fnc.php:307
+#: includes/Messages.fnc.php:129 includes/Messages.fnc.php:313
 msgid "Archive"
 msgstr "Archivar"
 
-#: includes/Messages.fnc.php:189
+#: includes/Messages.fnc.php:195
 msgid "To"
 msgstr "Para"
 
-#: includes/Messages.fnc.php:313
+#: includes/Messages.fnc.php:319
 msgid "Reply"
 msgstr "Responder"
 
-#: includes/Messages.fnc.php:319
+#: includes/Messages.fnc.php:325
 #, php-format
 msgid "Back to %s"
 msgstr "Volver a %s"
 
-#: includes/Messages.fnc.php:420
+#: includes/Messages.fnc.php:426
 #, php-format
 msgid "%s Read"
 msgstr "%s Leído"
