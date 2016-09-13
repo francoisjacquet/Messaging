@@ -15,7 +15,9 @@ Sponsored by Whitesystem Colombia
 
 DESCRIPTION
 -----------
-This module provides an internal messaging system for direct communication between administrators, teachers, parents and students.
+This module provides an internal messaging system for communication between administrators, teachers, parents and students.
+
+Translated in [French](https://www.rosariosis.org/fr/messaging-module/) & [Spanish](https://www.rosariosis.org/es/messaging-module/).
 
 CONTENT
 -------
