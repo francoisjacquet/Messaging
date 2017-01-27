@@ -5,7 +5,7 @@ Messaging Module
 
 http://github.com/francoisjacquet/Messaging
 
-Version 1.0 - March, 2016
+Version 1.1 - January, 2017
 
 License GNU GPL v2
 
@@ -31,4 +31,4 @@ Copy the `Messaging/` folder (if named `Messaging-master`, rename it) and its co
 
 Go to _School Setup > School Configuration > Modules_ and click "Activate".
 
-Requires RosarioSIS 2.8.26+
+Requires RosarioSIS 2.9+
