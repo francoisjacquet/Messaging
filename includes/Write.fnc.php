@@ -69,7 +69,7 @@ function SendMessage( $msg )
 		// Is MarkDown.
 		require_once 'ProgramFunctions/MarkDownHTML.fnc.php';
 
-		$sanitized_msg = SanitizeMarkDown( $msg['message'] );
+		$sanitized_msg = SanitizeHTML( $msg['message'] );
 	}
 	else
 	{

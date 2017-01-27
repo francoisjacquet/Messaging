@@ -207,11 +207,10 @@ if ( $reply
 	}
 
 	// Message field.
-	DrawHeader( TextAreaInput(
+	DrawHeader( TinyMCEInput(
 		'',
 		'message',
-		_( 'Message' ),
-		'required'
+		_( 'Message' )
 	) );
 
 
