@@ -233,6 +233,9 @@ if ( $reply
 		// No ListOutput search form.
 		$extra['options']['search'] = false;
 
+		// No link for name.
+		$extra['link']['FULL_NAME'] = false;
+
 		if ( $recipients_key === 'staff_id' )
 		{
 			// Do not send message to self.
