@@ -38,34 +38,37 @@ if ( isset( $note ) )
 }
 
 if ( isset( $_REQUEST['view'] )
-	&& $_REQUEST['view'] === 'message' )
+	&& $_REQUEST['view'] === 'message'
+	&& MessageOutput( $_REQUEST['message_id'] ) )
 {
-	MessageOutput( $_REQUEST['message_id'] );
-
-	exit;
+	// Display message.
+	// exit;
 }
-
-$views_data = GetMessagesViewsData();
-
-$views_left = '<a href="' . $views_data['unread']['link'] . '">' . $views_data['unread']['label'] .
-	'</a> |&nbsp;<a href="' . $views_data['read']['link'] . '">' . $views_data['read']['label'] .
-	'</a> |&nbsp;<a href="' . $views_data['archived']['link'] . '">' . $views_data['archived']['label'] . '</a>';
-
-$views_right = '<a href="' . $views_data['sent']['link'] . '">' . $views_data['sent']['label'] . '</a>';
-
-DrawHeader( $views_left, $views_right );
-
-// Get current view.
-$current_view = 'unread';
-
-if ( isset( $_REQUEST['view'] )
-	&& in_array( $_REQUEST['view'], array_keys( $views_data ) ) )
+else
 {
-	$current_view = $_REQUEST['view'];
+	// Display messages list.
+	$views_data = GetMessagesViewsData();
+
+	$views_left = '<a href="' . $views_data['unread']['link'] . '">' . $views_data['unread']['label'] .
+		'</a> |&nbsp;<a href="' . $views_data['read']['link'] . '">' . $views_data['read']['label'] .
+		'</a> |&nbsp;<a href="' . $views_data['archived']['link'] . '">' . $views_data['archived']['label'] . '</a>';
+
+	$views_right = '<a href="' . $views_data['sent']['link'] . '">' . $views_data['sent']['label'] . '</a>';
+
+	DrawHeader( $views_left, $views_right );
+
+	// Get current view.
+	$current_view = 'unread';
+
+	if ( isset( $_REQUEST['view'] )
+		&& in_array( $_REQUEST['view'], array_keys( $views_data ) ) )
+	{
+		$current_view = $_REQUEST['view'];
+	}
+
+	// Display View header.
+	DrawHeader( '<b>' . $views_data[ $current_view ]['plural'] . '</b>' );
+
+	// Display View.
+	MessagesListOutput( $current_view );
 }
-
-// Display View header.
-DrawHeader( '<b>' . $views_data[ $current_view ]['plural'] . '</b>' );
-
-// Display View.
-MessagesListOutput( $current_view );
