@@ -697,3 +697,73 @@ function _makeWriteChooseCheckbox( $value, $title )
 
 	return '<input type="checkbox" name="recipients_ids[]" value="' . $user_id . '" checked />';
 }
+
+
+/**
+ * Get Recipients header (tabs):
+ * Depends on User profile (only Teachers and Admins)
+ * Depends on current Recipient key (bold)
+ *
+ * @since 1.1
+ *
+ * @param string $recipients_key Current recipient key.
+ *
+ * @return string Header to be displayed using DrawHeader().
+ */
+function GetRecipientsHeader( $recipients_key )
+{
+	$search_staff_url = PreparePHP_SELF(
+		$_REQUEST,
+		array( 'search_modfunc', 'reply_to_id', 'teacher_staff' ),
+		array( 'recipients_key' => 'staff_id' )
+	);
+
+	$search_teacher_staff_url = PreparePHP_SELF(
+		$_REQUEST,
+		array( 'search_modfunc', 'reply_to_id' ),
+		array( 'recipients_key' => 'staff_id', 'teacher_staff' => 'Y' )
+	);
+
+	$search_student_url = PreparePHP_SELF(
+		$_REQUEST,
+		array( 'search_modfunc', 'reply_to_id', 'teacher_staff' ),
+		array( 'recipients_key' => 'student_id' )
+	);
+
+	// If more than one allowed recipients key, display Users | Students.
+	// For Teachers, it will be Parents | Students | Staff.
+	$header = User( 'PROFILE' ) === 'admin' ? _( 'Users' ) : _( 'Parents' );
+
+	if ( $recipients_key === 'staff_id'
+		&& ! isset( $_REQUEST['teacher_staff'] ) )
+	{
+		$header = '<b>' . $header . '</b>';
+	}
+
+	$header = '<a href="' . $search_staff_url . '">' . $header . '</a>';
+
+	$header_students = _( 'Students' );
+
+	if ( $recipients_key === 'student_id' )
+	{
+		$header_students = '<b>' . $header_students . '</b>';
+	}
+
+	$header .= ' | <a href="' . $search_student_url . '">' . $header_students . '</a>';
+
+	if ( User( 'PROFILE' ) === 'teacher' )
+	{
+		$header_teacher_staff = _( 'Staff' );
+
+		if ( $recipients_key === 'staff_id'
+			&& isset( $_REQUEST['teacher_staff'] ) )
+		{
+			$header_teacher_staff = '<b>' . $header_teacher_staff . '</b>';
+		}
+
+		$header .= ' | <a href="' . $search_teacher_staff_url . '">' .
+			$header_teacher_staff . '</a>';
+	}
+
+	return $header;
+}

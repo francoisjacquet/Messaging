@@ -7,3 +7,4 @@ Changes in 1.1
 - Fix: No link for name column in Write.fnc.php
 - Fix: change school while viewing message in Messages.php
 - Update screenshots
+- Add GetRecipientsHeader(), display current tab in bold in Write.fnc.php

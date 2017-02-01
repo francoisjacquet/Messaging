@@ -75,79 +75,49 @@ if ( ! $reply )
 
 		echo ErrorMessage( $error, 'fatal' );
 	}
-	elseif ( count( $recipients_keys ) > 1 )
+	elseif ( count( $recipients_keys ) > 1
+		&& ( User( 'PROFILE' ) === 'admin'
+			|| User( 'PROFILE' ) === 'teacher' ) ) // Limit to Teachers & Admins.
 	{
-		$search_staff_url = PreparePHP_SELF(
-			$_REQUEST,
-			array( 'search_modfunc', 'reply_to_id', 'teacher_staff' ),
-			array( 'recipients_key' => 'staff_id' )
-		);
-
-		$search_teacher_staff_url = PreparePHP_SELF(
-			$_REQUEST,
-			array( 'search_modfunc', 'reply_to_id' ),
-			array( 'recipients_key' => 'staff_id', 'teacher_staff' => 'Y' )
-		);
-
-		$search_student_url = PreparePHP_SELF(
-			$_REQUEST,
-			array( 'search_modfunc', 'reply_to_id', 'teacher_staff' ),
-			array( 'recipients_key' => 'student_id' )
-		);
-
-		// If more than one allowed recipients key, display Users | Students.
-		// For Teachers, it will be Parents | Students | Staff.
-		$header = '<a href="' . $search_staff_url . '"><b>' .
-			( User( 'PROFILE' ) === 'admin' ? _( 'Users' ) : _( 'Parents' ) ) . '</b></a>';
-		$header .= ' | <a href="' . $search_student_url . '"><b>' .
-			_( 'Students' ) . '</b></a>';
-
-		if ( User( 'PROFILE' ) === 'teacher' )
+		// Search screen.
+		// Set Recipients key.
+		if ( isset( $_REQUEST['recipients_key'] )
+			&& in_array( $_REQUEST['recipients_key'], $recipients_keys ) )
 		{
-			$header .= ' | <a href="' . $search_teacher_staff_url . '"><b>' .
-				_( 'Staff' ) . '</b></a>';
+			$recipients_key = $_REQUEST['recipients_key'];
+		}
+		else
+		{
+			// Defaults to student_id for Teachers, to staff_id for Admins.
+			$recipients_key = User( 'PROFILE' ) === 'teacher' ? 'student_id' : 'staff_id';
 		}
 
-		echo DrawHeader( $header );
+		$recipients_header = GetRecipientsHeader( $recipients_key );
 
-		// Search screen.
-		if ( User( 'PROFILE' ) === 'admin'
-			|| User( 'PROFILE' ) === 'teacher' )
+		echo DrawHeader( $recipients_header );
+
+		if ( ! isset( $_REQUEST['search_modfunc'] )
+			&& ! isset( $_REQUEST['teacher_staff'] ) )
 		{
-			if ( isset( $_REQUEST['recipients_key'] )
-				&& in_array( $_REQUEST['recipients_key'], $recipients_keys ) )
+			$extra['new'] = true;
+
+			// Pass recipients_key to next screen.
+			$extra['action'] = '&recipients_key=' . $recipients_key;
+
+			if ( User( 'PROFILE' ) === 'teacher'
+				&& $recipients_key === 'staff_id' )
 			{
-				$recipients_key = $_REQUEST['recipients_key'];
-			}
-			else
-			{
-				// Defaults to student_id for Teachers, to staff_id for Admins.
-				$recipients_key = User( 'PROFILE' ) === 'teacher' ? 'student_id' : 'staff_id';
+				// Find a Parent.
+				$extra['search_title'] = dgettext( 'Messaging', 'Find a Parent' );
+
+				$extra['profile'] = 'parent';
 			}
 
-			if ( ! isset( $_REQUEST['search_modfunc'] )
-				&& ! isset( $_REQUEST['teacher_staff'] ) )
-			{
-				$extra['new'] = true;
+			// Only for admins and teachers.
+			Search( $recipients_key, $extra );
 
-				// Pass recipients_key to next screen.
-				$extra['action'] = '&recipients_key=' . $recipients_key;
-
-				if ( User( 'PROFILE' ) === 'teacher'
-					&& $recipients_key === 'staff_id' )
-				{
-					// Find a Parent.
-					$extra['search_title'] = dgettext( 'Messaging', 'Find a Parent' );
-
-					$extra['profile'] = 'parent';
-				}
-
-				// Only for admins and teachers.
-				Search( $recipients_key, $extra );
-
-				// Unset Recipients key so Write form is not displayed.
-				$recipients_key = '';
-			}
+			// Unset Recipients key so Write form is not displayed.
+			$recipients_key = '';
 		}
 	}
 	else
