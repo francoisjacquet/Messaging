@@ -49,14 +49,6 @@ else
 	// Display messages list.
 	$views_data = GetMessagesViewsData();
 
-	$views_left = '<a href="' . $views_data['unread']['link'] . '">' . $views_data['unread']['label'] .
-		'</a> |&nbsp;<a href="' . $views_data['read']['link'] . '">' . $views_data['read']['label'] .
-		'</a> |&nbsp;<a href="' . $views_data['archived']['link'] . '">' . $views_data['archived']['label'] . '</a>';
-
-	$views_right = '<a href="' . $views_data['sent']['link'] . '">' . $views_data['sent']['label'] . '</a>';
-
-	DrawHeader( $views_left, $views_right );
-
 	// Get current view.
 	$current_view = 'unread';
 
@@ -65,6 +57,22 @@ else
 	{
 		$current_view = $_REQUEST['view'];
 	}
+
+	$views_left = '<a href="' . $views_data['unread']['link'] . '">' .
+		( $current_view === 'unread' ?
+			'<b>' . $views_data['unread']['label'] . '</b>' : $views_data['unread']['label'] ) .
+		'</a> |&nbsp;<a href="' . $views_data['read']['link'] . '">' .
+		( $current_view === 'read' ?
+			'<b>' . $views_data['read']['label'] . '</b>' : $views_data['read']['label'] ) .
+		'</a> |&nbsp;<a href="' . $views_data['archived']['link'] . '">' .
+		( $current_view === 'archived' ?
+			'<b>' . $views_data['archived']['label'] . '</b>' : $views_data['archived']['label'] ) . '</a>';
+
+	$views_right = '<a href="' . $views_data['sent']['link'] . '">' .
+		( $current_view === 'sent' ?
+			'<b>' . $views_data['sent']['label'] . '</b>' : $views_data['sent']['label'] ) . '</a>';
+
+	DrawHeader( $views_left, $views_right );
 
 	// Display View header.
 	DrawHeader( '<b>' . $views_data[ $current_view ]['plural'] . '</b>' );
