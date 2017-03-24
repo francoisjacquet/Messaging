@@ -245,7 +245,7 @@ function _makeMessageData( $value, $column )
 		$msg = nl2br( $msg );
 	}
 
-	return '<div class="markdown-to-html" style="padding: 10px;">' . $msg .	'</div>';
+	return '<div class="tinymce-html" style="padding: 10px;">' . $msg .	'</div>';
 }
 
 
