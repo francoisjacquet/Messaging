@@ -5,7 +5,7 @@ Messaging Module
 
 http://github.com/francoisjacquet/Messaging
 
-Version 1.1 - January, 2017
+Version 1.2 - April, 2017
 
 License GNU GPL v2
 
