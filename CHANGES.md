@@ -1,6 +1,10 @@
 # CHANGES
 ## Messaging Module
 
+Changes in 1.2
+--------------
+- SQL error fix on install: check if exists before INSERT in install.sql
+
 Changes in 1.1
 --------------
 - Use TinyMCE as Message editor in Write.php
