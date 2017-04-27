@@ -239,7 +239,6 @@ BEGIN
         WHERE c.relname='messages_ind'
         AND n.nspname=CURRENT_SCHEMA
     ) THEN
-    THEN
         CREATE INDEX messages_ind ON messages USING btree (syear, school_id);
     END IF;
 END
