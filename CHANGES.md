@@ -4,6 +4,7 @@
 Changes in 1.3
 --------------
 - Exclude self from recipients when Teacher writing message to Teachers in Write.fnc.php
+- Remove modfunc from URL using new RedirectURL function in Messages.php
 
 Changes in 1.2
 --------------

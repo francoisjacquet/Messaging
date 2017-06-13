@@ -30,6 +30,12 @@ if ( $_REQUEST['modfunc'] === 'archive' )
 	{
 		$note[] = button( 'check', '', '', 'bigger' ) . '&nbsp;' . _( 'Message archived.' );
 	}
+
+	if ( function_exists( 'RedirectURL' ) )
+	{
+		// @since 3.3.
+		RedirectURL( 'modfunc' );
+	}
 }
 
 if ( isset( $note ) )
