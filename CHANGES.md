@@ -1,6 +1,10 @@
 # CHANGES
 ## Messaging Module
 
+Changes in 1.3
+--------------
+- Exclude self from recipients when Teacher writing message to Teachers in Write.fnc.php
+
 Changes in 1.2
 --------------
 - SQL error fix on install: check if exists before INSERT in install.sql

@@ -402,11 +402,20 @@ function _getAllowedTeachersRecipients()
 
 	if ( ! $allowed_ids )
 	{
+		$sql_exclude_self = '';
+
+		if ( User( 'PROFILE' ) === 'teacher' )
+		{
+			// Exclude self.
+			$sql_exclude_self = " AND STAFF_ID<>'" . User( 'STAFF_ID' ) . "'";
+		}
+
 		$allowed_ids_RET = DBGet( DBQuery( "SELECT array_agg(STAFF_ID) as ALLOWED_IDS
 			FROM STAFF
 			WHERE PROFILE='teacher'
 			AND SYEAR='" . UserSyear() . "'
-			AND (SCHOOLS IS NULL OR position('," . UserSchool() . ",' IN SCHOOLS)>0)" ) );
+			AND (SCHOOLS IS NULL OR position('," . UserSchool() . ",' IN SCHOOLS)>0)" .
+			$sql_exclude_self ) );
 
 		if ( isset( $allowed_ids_RET[1]['ALLOWED_IDS'] ) )
 		{
