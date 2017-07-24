@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Messaging module for RosarioSIS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-13 12:55-0500\n"
-"PO-Revision-Date: 2016-09-13 12:55-0500\n"
+"POT-Creation-Date: 2017-07-24 14:35+0100\n"
+"PO-Revision-Date: 2017-07-24 14:35+0100\n"
 "Last-Translator: François Jacquet <info@rosariosis.org>\n"
 "Language-Team: RosarioSIS <info@rosariosis.org>\n"
 "Language: es_ES\n"
@@ -16,15 +16,15 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: Menu.php:14
+#: Menu.php:12 Menu.php:19
 msgid "Messaging"
 msgstr "Mensajeria"
 
-#: Menu.php:19 Menu.php:25
+#: Menu.php:14 Menu.php:21
 msgid "Messages"
 msgstr "Mensajes"
 
-#: Menu.php:20 Menu.php:26
+#: Menu.php:15 Menu.php:22
 msgid "Write"
 msgstr "Escribir"
 
@@ -44,48 +44,32 @@ msgstr "El mensaje no ha sido enviado."
 msgid "You are not allowed to send messages."
 msgstr "No está autorizado para enviar mensajes."
 
-#: Write.php:101
-msgid "Users"
-msgstr ""
-
-#: Write.php:101
-msgid "Parents"
-msgstr ""
-
-#: Write.php:103 includes/Write.fnc.php:219
-msgid "Students"
-msgstr ""
-
-#: Write.php:108 includes/Write.fnc.php:220
-msgid "Staff"
-msgstr ""
-
-#: Write.php:140
+#: Write.php:111
 msgid "Find a Parent"
 msgstr "Encontrar un Padre"
 
-#: Write.php:192 Write.php:326
+#: Write.php:162 Write.php:298
 msgid "Send"
 msgstr "Enviar"
 
-#: Write.php:198 includes/Messages.fnc.php:67 includes/Messages.fnc.php:73
+#: Write.php:168 includes/Messages.fnc.php:67 includes/Messages.fnc.php:73
 #: includes/Messages.fnc.php:80 includes/Messages.fnc.php:232
 msgid "Subject"
 msgstr "Asunto"
 
-#: Write.php:213
+#: Write.php:183
 msgid "Message"
 msgstr "Mensaje"
 
-#: Write.php:282
+#: Write.php:254
 msgid "Teachers"
 msgstr ""
 
-#: Write.php:288
+#: Write.php:260
 msgid "Administrators"
 msgstr ""
 
-#: Write.php:298
+#: Write.php:270
 msgid "Hold the CTRL key down to select multiple options"
 msgstr ""
 
@@ -192,10 +176,26 @@ msgstr ""
 msgid "You are not allowed to send a message to those recipients."
 msgstr "No tiene permiso para enviar un mensaje a estos recipientes."
 
-#: includes/Write.fnc.php:606 includes/Write.fnc.php:608
+#: includes/Write.fnc.php:219 includes/Write.fnc.php:754
+msgid "Students"
+msgstr ""
+
+#: includes/Write.fnc.php:220 includes/Write.fnc.php:765
+msgid "Staff"
+msgstr ""
+
+#: includes/Write.fnc.php:615 includes/Write.fnc.php:617
 #, php-format
 msgid "Re: %s"
 msgstr "Re: %s"
+
+#: includes/Write.fnc.php:744
+msgid "Users"
+msgstr ""
+
+#: includes/Write.fnc.php:744
+msgid "Parents"
+msgstr ""
 
 #~ msgid "# of Students"
 #~ msgstr "# de Estudiantes"

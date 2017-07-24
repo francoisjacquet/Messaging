@@ -4,6 +4,7 @@
 Changes in 1.4
 --------------
 - Add Arabic translation, thanks to Ali Al-Hassan in locale/ar_AE.utf8/
+- Translate "Recipients" in Messages.fnc.php
 
 Changes in 1.3
 --------------

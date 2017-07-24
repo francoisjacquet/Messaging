@@ -65,7 +65,7 @@ function GetMessagesViewsData()
 
 		$columns_sent = array(
 			'SUBJECT' => dgettext( 'Messaging', 'Subject' ),
-			'RECIPIENTS' => _( 'Recipients' ),
+			'RECIPIENTS' => dgettext( 'Messaging', 'Recipients' ),
 			'DATETIME' => _( 'Date' ),
 		);
 
