@@ -1,6 +1,10 @@
 # CHANGES
 ## Messaging Module
 
+Changes in 1.4
+--------------
+- Add Arabic translation, thanks to Ali Al-Hassan in locale/ar_AE.utf8/
+
 Changes in 1.3
 --------------
 - Exclude self from recipients when Teacher writing message to Teachers in Write.fnc.php

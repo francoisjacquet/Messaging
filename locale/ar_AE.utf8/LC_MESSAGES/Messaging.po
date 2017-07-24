@@ -1,0 +1,234 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Messaging module for RosarioSIS\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-09-13 12:55-0500\n"
+"PO-Revision-Date: 2017-07-24 14:28+0100\n"
+"Last-Translator: François Jacquet <info@rosariosis.org>\n"
+"Language-Team: Ali Al-Hassan\n"
+"Language: ar_AE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-KeywordsList: dgettext:2\n"
+"X-Poedit-Basepath: /var/www/github/rosariosis-module-messaging\n"
+"X-Generator: Poedit 1.7.6\n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5);\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: Menu.php:14
+msgid "Messaging"
+msgstr "المراسلة"
+
+#: Menu.php:19 Menu.php:25
+msgid "Messages"
+msgstr "الرسائل"
+
+#: Menu.php:20 Menu.php:26
+msgid "Write"
+msgstr "اكتب"
+
+#: Messages.php:31
+msgid "Message archived."
+msgstr "أرشيف الرسائل"
+
+#: Write.php:27
+msgid "Message sent."
+msgstr "تم ارسال الرسالة"
+
+#: Write.php:31
+msgid "The message could not be sent."
+msgstr "لم يتم ارسال الرسالة."
+
+#: Write.php:74
+msgid "You are not allowed to send messages."
+msgstr "ليس مسموح لك بإرسال هذه الرسائل."
+
+#: Write.php:101
+msgid "Users"
+msgstr ""
+
+#: Write.php:101
+msgid "Parents"
+msgstr ""
+
+#: Write.php:103 includes/Write.fnc.php:219
+msgid "Students"
+msgstr ""
+
+#: Write.php:108 includes/Write.fnc.php:220
+msgid "Staff"
+msgstr ""
+
+#: Write.php:140
+msgid "Find a Parent"
+msgstr "ابحث عن ولي أمر"
+
+#: Write.php:192 Write.php:326
+msgid "Send"
+msgstr "أرسل"
+
+#: Write.php:198 includes/Messages.fnc.php:67 includes/Messages.fnc.php:73
+#: includes/Messages.fnc.php:80 includes/Messages.fnc.php:232
+msgid "Subject"
+msgstr "الموضوع"
+
+#: Write.php:213
+msgid "Message"
+msgstr "الرسالة"
+
+#: Write.php:282
+msgid "Teachers"
+msgstr ""
+
+#: Write.php:288
+msgid "Administrators"
+msgstr ""
+
+#: Write.php:298
+msgid "Hold the CTRL key down to select multiple options"
+msgstr ""
+
+#: functions.php:47
+#, php-format
+msgid "%d new message"
+msgid_plural "%d new messages"
+msgstr[0] "%d رسالة جديدة"
+msgstr[1] "%d رسائل جديدة"
+
+#: includes/Messages.fnc.php:68
+msgid "Recipients"
+msgstr "المرسل لهم"
+
+#: includes/Messages.fnc.php:69 includes/Messages.fnc.php:75
+#: includes/Messages.fnc.php:82 includes/Messages.fnc.php:147
+msgid "Date"
+msgstr ""
+
+#: includes/Messages.fnc.php:74 includes/Messages.fnc.php:81
+#: includes/Messages.fnc.php:162
+msgid "From"
+msgstr "من"
+
+#: includes/Messages.fnc.php:87
+msgid "Unread"
+msgstr "غير مقروء"
+
+#: includes/Messages.fnc.php:88
+msgid "Unread message"
+msgstr "رسالة غير مقروءه"
+
+#: includes/Messages.fnc.php:89
+msgid "Unread messages"
+msgstr "رسائل غير مقروءة"
+
+#: includes/Messages.fnc.php:94
+msgid "Read"
+msgstr "مقروء"
+
+#: includes/Messages.fnc.php:95
+msgid "Read message"
+msgstr "رسالة مقروءةت"
+
+#: includes/Messages.fnc.php:96
+msgid "Read messages"
+msgstr "رسائل غير مقروءة"
+
+#: includes/Messages.fnc.php:101
+msgid "Archived"
+msgstr "مؤرشف"
+
+#: includes/Messages.fnc.php:102
+msgid "Archived message"
+msgstr "رسالة مؤرشفة"
+
+#: includes/Messages.fnc.php:103
+msgid "Archived messages"
+msgstr "رسائل مؤرشفة"
+
+#: includes/Messages.fnc.php:108
+msgid "Sent"
+msgstr "الرسائل المرسلة"
+
+#: includes/Messages.fnc.php:109
+msgid "Sent message"
+msgstr "رسائل مرسلة"
+
+#: includes/Messages.fnc.php:110
+msgid "Sent messages"
+msgstr "رسائل مرسلة"
+
+#: includes/Messages.fnc.php:129 includes/Messages.fnc.php:313
+msgid "Archive"
+msgstr "الأرشيف"
+
+#: includes/Messages.fnc.php:195
+msgid "To"
+msgstr "إلى"
+
+#: includes/Messages.fnc.php:319
+msgid "Reply"
+msgstr "الرد"
+
+#: includes/Messages.fnc.php:325
+#, php-format
+msgid "Back to %s"
+msgstr "العودة إلى %s"
+
+#: includes/Messages.fnc.php:426
+#, php-format
+msgid "%s Read"
+msgstr "%s مقروء"
+
+#: includes/Write.fnc.php:32
+msgid "The message could not be sent. Form elements are missing."
+msgstr "لم نتمكن من إرسال هذه الرسالة. مكونات الحقل ناقصة."
+
+#: includes/Write.fnc.php:41
+msgid "Please fill in the required fields"
+msgstr ""
+
+#: includes/Write.fnc.php:58
+msgid "You are not allowed to send a message to those recipients."
+msgstr "ليست لديك الصلاحية لإرسال رسالتك للمتلقين الذي اخترتهم."
+
+#: includes/Write.fnc.php:606 includes/Write.fnc.php:608
+#, php-format
+msgid "Re: %s"
+msgstr "الرد: %s"
+
+#~ msgid "# of Students"
+#~ msgstr "# de Estudiantes"
+
+#~ msgid "# of Administrators"
+#~ msgstr "# de Administradores"
+
+#~ msgid "# of Teachers"
+#~ msgstr "# de Docentes"
+
+#~ msgid "# of Parents"
+#~ msgstr "# de Padres"
+
+#~ msgid "Create Subject PDF for Selected Students"
+#~ msgstr "Crear el PDF Materia para los Estudiantes Seleccionados"
+
+#~ msgid "Messaging Widget"
+#~ msgstr "Widget de Ejemplo"
+
+#~ msgid "Setup"
+#~ msgstr "Configuración"
+
+#~ msgid "Messaging Resource"
+#~ msgstr "Recurso de Ejemplo"
+
+#~ msgid "The configuration value has been modified."
+#~ msgstr "El valor de configuración ha sido modificado."
+
+#~ msgid "Messaging module Setup"
+#~ msgstr "Configuración del Módulo Ejemplo"
+
+#~ msgid "Try to enter a non-numeric value"
+#~ msgstr "Intente entrar un valor no numerico"
+
+#~ msgid "Messaging config value label"
+#~ msgstr "Ejemplo de nombre del valor de config"
