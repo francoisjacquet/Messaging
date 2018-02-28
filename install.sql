@@ -127,7 +127,7 @@ CREATE OR REPLACE FUNCTION create_table_messagexuser() RETURNS void AS
 $func$
 BEGIN
     IF EXISTS (SELECT 1 FROM pg_catalog.pg_tables
-        WHERE schemaname = CURRENT_SCHEMA
+        WHERE schemaname = CURRENT_SCHEMA()
         AND tablename = 'messagexuser') THEN
     RAISE NOTICE 'Table "messagexuser" already exists.';
     ELSE
@@ -157,7 +157,7 @@ BEGIN
         SELECT 1 FROM pg_class c
         JOIN pg_namespace n ON n.oid=c.relnamespace
         WHERE c.relname='messagexuser_ind'
-        AND n.nspname=CURRENT_SCHEMA
+        AND n.nspname=CURRENT_SCHEMA()
     ) THEN
         CREATE INDEX messagexuser_ind ON messagexuser (user_id, key, status);
     END IF;
@@ -180,7 +180,7 @@ CREATE OR REPLACE FUNCTION create_table_messages() RETURNS void AS
 $func$
 BEGIN
     IF EXISTS (SELECT 1 FROM pg_catalog.pg_tables
-        WHERE schemaname=CURRENT_SCHEMA
+        WHERE schemaname=CURRENT_SCHEMA()
         AND tablename='messages') THEN
     RAISE NOTICE 'Table "messages" already exists.';
     ELSE
