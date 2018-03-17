@@ -11,6 +11,8 @@ require_once 'modules/Messaging/includes/Common.fnc.php';
 // Include Write functions.
 require_once 'modules/Messaging/includes/Write.fnc.php';
 
+$reply = '';
+
 if ( isset( $_POST['send'] ) )
 {
 	// Send message.
@@ -209,7 +211,7 @@ if ( $reply
 		if ( $recipients_key === 'staff_id' )
 		{
 			// Do not send message to self.
-			$extra['WHERE'] .= " AND s.STAFF_ID<>'" . User( 'STAFF_ID' ) . "' ";
+			$extra['WHERE'] = " AND s.STAFF_ID<>'" . User( 'STAFF_ID' ) . "' ";
 		}
 
 		// Deactivate Search All Schools.
