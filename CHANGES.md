@@ -1,6 +1,10 @@
 # CHANGES
 ## Messaging Module
 
+Changes in 1.5
+--------------
+- Attach File to Messages (Premium)
+
 Changes in 1.4
 --------------
 - Add Arabic translation, thanks to Ali Al-Hassan in locale/ar_AE.utf8/
