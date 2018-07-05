@@ -1,3 +1,8 @@
+GitLab
+------
+
+RosarioSIS code is now hosted at [**GitLab**](https://gitlab.com/francoisjacquet/Messaging)!
+
 Messaging Module
 ================
 
